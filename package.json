@@ -1,0 +1,16 @@
+{
+  "name": "solidity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pancakeswap/pancake-swap-lib": "0.0.4",
+    "@pancakeswap/sdk": "^2.4.0",
+    "ganache-cli": "^6.12.2",
+    "truffle": "^5.4.9",
+    "web3": "^1.5.2"
+  }
+}
