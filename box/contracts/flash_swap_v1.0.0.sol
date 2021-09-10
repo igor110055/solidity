@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.0 <=0.8.7;
+pragma solidity 0.5;
 
 import "./imports/IPancakeCallee.sol";
 import "./imports/IPancakeFactory.sol";
@@ -10,8 +10,6 @@ import "./imports/IERC20.sol";
 contract TestFlashSwap is IPancakeCallee {
     address private constant FACTORY = 0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73;
     address private constant WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
-
-    receive() external payable {}
 
     event Log(string message, uint256 val);
 
