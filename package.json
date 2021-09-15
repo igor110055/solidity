@@ -7,8 +7,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ganache-cli": "^6.12.2",
-    "truffle": "^5.4.9",
     "web3": "^1.5.2"
   }
 }
