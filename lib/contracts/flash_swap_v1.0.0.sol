@@ -28,12 +28,7 @@ contract TestFlashSwap is IPancakeCallee {
         IPancakePair(pair).swap(amount0Out, amount1Out, address(this), data);
     }
 
-    function pancakeCall(
-        address _sender,
-        uint _amount0,
-        uint _amount1,
-        bytes calldata _data
-    ) external override {
+    function pancakeCall(address _sender, uint _amount0, uint _amount1, bytes calldata _data) external override {
         emit Log("asdf", 69);
         address token0 = IPancakePair(msg.sender).token0();
         address token1 = IPancakePair(msg.sender).token1();

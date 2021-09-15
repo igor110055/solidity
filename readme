@@ -1,0 +1,1 @@
+ganache-cli -f https://bsc-dataseed.binance.org -m MNEMONIC-BIP39-STYLE
