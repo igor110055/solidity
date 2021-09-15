@@ -2,7 +2,6 @@
   "contractName": "IPancakeCallee",
   "abi": [
     {
-      "constant": false,
       "inputs": [
         {
           "internalType": "address",
@@ -27,30 +26,32 @@
       ],
       "name": "pancakeCall",
       "outputs": [],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount0\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount1\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"pancakeCall\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IPancakeCallee.sol\":\"IPancakeCallee\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IPancakeCallee.sol\":{\"keccak256\":\"0xbe69024037fcbe14711467474f7b5d64b1209daec43a03133527dd4ee375a591\",\"urls\":[\"bzz-raw://a0e05f5a766dc0c27e5da40925cd6e14bf77eb3d5aa969bf8e3c6fd76d1e6349\",\"dweb:/ipfs/QmPScE4Cq496XHvjvBFcLZ6qaEnb2uw6GTwG5v8tbMjD7j\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.7+commit.e28d00a7\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount0\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount1\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"pancakeCall\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IPancakeCallee.sol\":\"IPancakeCallee\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IPancakeCallee.sol\":{\"keccak256\":\"0xbe69024037fcbe14711467474f7b5d64b1209daec43a03133527dd4ee375a591\",\"urls\":[\"bzz-raw://a0e05f5a766dc0c27e5da40925cd6e14bf77eb3d5aa969bf8e3c6fd76d1e6349\",\"dweb:/ipfs/QmPScE4Cq496XHvjvBFcLZ6qaEnb2uw6GTwG5v8tbMjD7j\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IPancakeCallee {\r\n    function pancakeCall(address sender, uint amount0, uint amount1, bytes calldata data) external;\r\n}\r\n",
-  "sourcePath": "C:\\Users\\Micha\\WebstormProjects\\solidity\\box\\contracts\\interfaces\\IPancakeCallee.sol",
+  "sourcePath": "C:\\Users\\Micha\\Desktop\\Programming Stuff\\Git\\solidity\\box\\contracts\\interfaces\\IPancakeCallee.sol",
   "ast": {
     "absolutePath": "project:/contracts/interfaces/IPancakeCallee.sol",
     "exportedSymbols": {
       "IPancakeCallee": [
-        1729
+        138
       ]
     },
-    "id": 1730,
+    "id": 139,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1717,
+        "id": 126,
         "literals": [
           "solidity",
           ">=",
@@ -58,41 +59,44 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:4"
+        "src": "0:24:6"
       },
       {
+        "abstract": false,
         "baseContracts": [],
         "contractDependencies": [],
         "contractKind": "interface",
-        "documentation": null,
         "fullyImplemented": false,
-        "id": 1729,
+        "id": 138,
         "linearizedBaseContracts": [
-          1729
+          138
         ],
         "name": "IPancakeCallee",
+        "nameLocation": "38:14:6",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
-            "body": null,
-            "documentation": null,
-            "id": 1728,
+            "functionSelector": "84800812",
+            "id": 137,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "pancakeCall",
+            "nameLocation": "69:11:6",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1726,
+              "id": 135,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1719,
+                  "id": 128,
+                  "mutability": "mutable",
                   "name": "sender",
+                  "nameLocation": "89:6:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1728,
-                  "src": "81:14:4",
+                  "scope": 137,
+                  "src": "81:14:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -100,26 +104,27 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1718,
+                    "id": 127,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "81:7:4",
+                    "src": "81:7:6",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 1721,
+                  "id": 130,
+                  "mutability": "mutable",
                   "name": "amount0",
+                  "nameLocation": "102:7:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1728,
-                  "src": "97:12:4",
+                  "scope": 137,
+                  "src": "97:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -127,25 +132,26 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1720,
+                    "id": 129,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "97:4:4",
+                    "src": "97:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 1723,
+                  "id": 132,
+                  "mutability": "mutable",
                   "name": "amount1",
+                  "nameLocation": "116:7:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1728,
-                  "src": "111:12:4",
+                  "scope": 137,
+                  "src": "111:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -153,25 +159,26 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1722,
+                    "id": 131,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "111:4:4",
+                    "src": "111:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 1725,
+                  "id": 134,
+                  "mutability": "mutable",
                   "name": "data",
+                  "nameLocation": "140:4:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1728,
-                  "src": "125:19:4",
+                  "scope": 137,
+                  "src": "125:19:6",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -179,247 +186,235 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 1724,
+                    "id": 133,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "125:5:4",
+                    "src": "125:5:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "80:65:4"
+              "src": "80:65:6"
             },
             "returnParameters": {
-              "id": 1727,
+              "id": 136,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "154:0:4"
+              "src": "154:0:6"
             },
-            "scope": 1729,
-            "src": "60:95:4",
+            "scope": 138,
+            "src": "60:95:6",
             "stateMutability": "nonpayable",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 1730,
-        "src": "28:130:4"
+        "scope": 139,
+        "src": "28:130:6",
+        "usedErrors": []
       }
     ],
-    "src": "0:160:4"
+    "src": "0:160:6"
   },
   "legacyAST": {
-    "attributes": {
-      "absolutePath": "project:/contracts/interfaces/IPancakeCallee.sol",
-      "exportedSymbols": {
-        "IPancakeCallee": [
-          1729
-        ]
-      }
+    "absolutePath": "project:/contracts/interfaces/IPancakeCallee.sol",
+    "exportedSymbols": {
+      "IPancakeCallee": [
+        138
+      ]
     },
-    "children": [
+    "id": 139,
+    "nodeType": "SourceUnit",
+    "nodes": [
       {
-        "attributes": {
-          "literals": [
-            "solidity",
-            ">=",
-            "0.5",
-            ".0"
-          ]
-        },
-        "id": 1717,
-        "name": "PragmaDirective",
-        "src": "0:24:4"
+        "id": 126,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:6"
       },
       {
-        "attributes": {
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
-          "contractKind": "interface",
-          "documentation": null,
-          "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            1729
-          ],
-          "name": "IPancakeCallee",
-          "scope": 1730
-        },
-        "children": [
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 138,
+        "linearizedBaseContracts": [
+          138
+        ],
+        "name": "IPancakeCallee",
+        "nameLocation": "38:14:6",
+        "nodeType": "ContractDefinition",
+        "nodes": [
           {
-            "attributes": {
-              "body": null,
-              "documentation": null,
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "pancakeCall",
-              "scope": 1729,
-              "stateMutability": "nonpayable",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "sender",
-                      "scope": 1728,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 1718,
-                        "name": "ElementaryTypeName",
-                        "src": "81:7:4"
-                      }
-                    ],
-                    "id": 1719,
-                    "name": "VariableDeclaration",
-                    "src": "81:14:4"
+            "functionSelector": "84800812",
+            "id": 137,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "pancakeCall",
+            "nameLocation": "69:11:6",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 135,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 128,
+                  "mutability": "mutable",
+                  "name": "sender",
+                  "nameLocation": "89:6:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 137,
+                  "src": "81:14:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
                   },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "amount0",
-                      "scope": 1728,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint",
-                          "type": "uint256"
-                        },
-                        "id": 1720,
-                        "name": "ElementaryTypeName",
-                        "src": "97:4:4"
-                      }
-                    ],
-                    "id": 1721,
-                    "name": "VariableDeclaration",
-                    "src": "97:12:4"
+                  "typeName": {
+                    "id": 127,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "81:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
                   },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "amount1",
-                      "scope": 1728,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint",
-                          "type": "uint256"
-                        },
-                        "id": 1722,
-                        "name": "ElementaryTypeName",
-                        "src": "111:4:4"
-                      }
-                    ],
-                    "id": 1723,
-                    "name": "VariableDeclaration",
-                    "src": "111:12:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "data",
-                      "scope": 1728,
-                      "stateVariable": false,
-                      "storageLocation": "calldata",
-                      "type": "bytes",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "bytes",
-                          "type": "bytes"
-                        },
-                        "id": 1724,
-                        "name": "ElementaryTypeName",
-                        "src": "125:5:4"
-                      }
-                    ],
-                    "id": 1725,
-                    "name": "VariableDeclaration",
-                    "src": "125:19:4"
-                  }
-                ],
-                "id": 1726,
-                "name": "ParameterList",
-                "src": "80:65:4"
-              },
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
+                  "visibility": "internal"
                 },
-                "children": [],
-                "id": 1727,
-                "name": "ParameterList",
-                "src": "154:0:4"
-              }
-            ],
-            "id": 1728,
-            "name": "FunctionDefinition",
-            "src": "60:95:4"
+                {
+                  "constant": false,
+                  "id": 130,
+                  "mutability": "mutable",
+                  "name": "amount0",
+                  "nameLocation": "102:7:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 137,
+                  "src": "97:12:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 129,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "97:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 132,
+                  "mutability": "mutable",
+                  "name": "amount1",
+                  "nameLocation": "116:7:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 137,
+                  "src": "111:12:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 131,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "111:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 134,
+                  "mutability": "mutable",
+                  "name": "data",
+                  "nameLocation": "140:4:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 137,
+                  "src": "125:19:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 133,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "125:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "80:65:6"
+            },
+            "returnParameters": {
+              "id": 136,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "154:0:6"
+            },
+            "scope": 138,
+            "src": "60:95:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
           }
         ],
-        "id": 1729,
-        "name": "ContractDefinition",
-        "src": "28:130:4"
+        "scope": 139,
+        "src": "28:130:6",
+        "usedErrors": []
       }
     ],
-    "id": 1730,
-    "name": "SourceUnit",
-    "src": "0:160:4"
+    "src": "0:160:6"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+    "version": "0.8.7+commit.e28d00a7.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-15T09:04:58.877Z",
+  "updatedAt": "2021-09-15T17:04:44.301Z",
   "devdoc": {
-    "methods": {}
+    "kind": "dev",
+    "methods": {},
+    "version": 1
   },
   "userdoc": {
-    "methods": {}
+    "kind": "user",
+    "methods": {},
+    "version": 1
   }
 }
