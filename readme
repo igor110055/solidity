@@ -1,7 +1,7 @@
 Tutorial:
 
 Start Local blockchain:
-    ganache-cli -f https://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet -m MNEMONIC-BIP39-STYLE
+    ganache-cli -f https://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/archive -m MNEMONIC-BIP39-STYLE
 
 Truffle (all commands must be executed in ./box directory):
     Only compile Contracts:
