@@ -25,15 +25,25 @@ contract TestSwapContract {
     }
 
     event Test(address asd);
+
     function swap(address[] memory path, uint _amount0) public payable {
         emit Log("amount", _amount0);
         IERC20(path[0]).transferFrom(msg.sender, address(this), _amount0);
-//        IPancakeRouter02(ROUTER).swapExactTokensForTokens(_amount0, 0, path, address(this), block.timestamp);
+        //        IPancakeRouter02(ROUTER).swapExactTokensForTokens(_amount0, 0, path, address(this), block.timestamp);
         emit Log("Swap Successful", 42);
-//        address pair = IPancakeFactory(FACTORY).getPair(_token0, _token1);
-//        require(pair != address(0), "Pair does not exist");
-//        uint amount0Out = _token0 == IPancakePair(pair).token0() ? _amount : 0;
-//        uint amount1Out = _token0 == IPancakePair(pair).token1() ? _amount : 0;
-//        IPancakePair(pair).swap(amount0Out, amount1Out, address(this), null);
+        //        address pair = IPancakeFactory(FACTORY).getPair(_token0, _token1);
+        //        require(pair != address(0), "Pair does not exist");
+        //        uint amount0Out = _token0 == IPancakePair(pair).token0() ? _amount : 0;
+        //        uint amount1Out = _token0 == IPancakePair(pair).token1() ? _amount : 0;
+        //        IPancakePair(pair).swap(amount0Out, amount1Out, address(this), null);
+    }
+
+    function swapETHForTokens(address _token0, address _token1, uint _amount) public payable {
+        emit Log("Successful Function call", 69);
+        address pair = IPancakeFactory(FACTORY).getPair(_token0, _token1);
+        require(pair != address(0), "Pair does not exist");
+        uint amount0Out = _token0 == IPancakePair(pair).token0() ? _amount : 0;
+        uint amount1Out = _token0 == IPancakePair(pair).token1() ? _amount : 0;
+        IPancakePair(pair).swap(amount0Out, amount1Out)
     }
 }

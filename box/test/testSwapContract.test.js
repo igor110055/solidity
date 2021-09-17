@@ -22,7 +22,7 @@ contract("TestSwapContract", accounts => {
 
         wMyContract.events.allEvents((error, result) => {
             if (error) {
-                print("Event crashed".red)
+                console.log("Event crashed".red)
             } else {
                 const values = result.returnValues
                 const keys = Object.keys(values)
@@ -54,7 +54,8 @@ contract("TestSwapContract", accounts => {
             const amount = tokens('1')
 
             const busdAddress = "0x55d398326f99059fF775485246999027B3197955"
-            console.log(await bnbContract.balanceOf[accounts[0]])
+            await myContract.swapETHForTokens(bnbAddress, busdAddress, tokens("1"))
+            // console.log(await bnbContract.balanceOf[accounts[0]])
             // await bnbContract.approve(myContract.address, amount, {from: accounts[0]});
             // await myContract.swap([bnbAddress, busdAddress], amount)
             assert.equal(1, 1)
