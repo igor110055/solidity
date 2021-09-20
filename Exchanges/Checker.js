@@ -11,22 +11,7 @@ function tokens(n) {
     return Web3.utils.toWei(n, 'ether');
 }
 
-// async function pancakeGetAmountOut(factory, amountIn, addressIn, addressOut) {
-//     let amountInWithFee = amountIn * 9975
-//     let numerator = amountInWithFee * reserveOut
-//     let denominator = reserveIn * 10000 + amountInWithFee
-//     return numerator / denominator
-// }
-//
-// async function biswapGetAmountOut(factory, amountIn, addressIn, addressOut) {
-//     let amountInWithFee = amountIn * (1000 - swapFee)
-//     let numerator = amountInWithFee * reserveOut
-//     let denominator = reserveIn * 1000 + amountInWithFee
-//     return numerator / denominator
-// }
-
 async function calculate(tokenInput, aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
-    // Formula: ((((((x * (10000 - c)) * b) / (a * 10000 + (x * (10000 - c)))) * (10000 - f)) * e) / (d * 10000 + ((((x * (10000 - c)) * b) / (a * 10000 + (x * (10000 - c)))) * (10000 - f)))) - x
     let amountInWithFee = tokenInput * (10000 - aFee)
     let numerator = amountInWithFee * aToken1Reserve
     let denominator = aToken0Reserve * 10000 + amountInWithFee
@@ -36,9 +21,6 @@ async function calculate(tokenInput, aToken0Reserve, aToken1Reserve, aFee, bToke
     numerator = amountInWithFee * bToken0Reserve
     denominator = bToken1Reserve * 10000 + amountInWithFee
     return (numerator / denominator) - tokenInput
-
-    // const maybe1 = (10000 * Math.sqrt(e) * Math.sqrt((a * b * c - 10000 * a * b) * d * f + (100000000 * a * b - 10000 * a * b * c) * d) - 100000000 * a * d) / ((b * c - 10000 * b) * f + (100000000 - 10000 * c) * d - 10000 * b * c + 100000000 * b)
-    // console.log(maybe1 / 1E18)
 }
 
 async function calculateExtrema(aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
