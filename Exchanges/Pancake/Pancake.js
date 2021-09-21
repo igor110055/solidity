@@ -42,21 +42,6 @@ class Pancake extends Exchange {
             return resolve(numerator / denominator)
         })
     }
-
-
-    async getPairs(){
-        return new Promise(async (resolve, reject) => {
-            const Web3 = require("web3")
-            this.web3 = new Web3("wss://bsc-ws-node.nariox.org:443")
-            console.time("Getting Pairs")
-            const pairsCount = await this.factoryContract.methods.allPairsLength.call().call()
-            let pairs = []
-            for(let pairIndex = 0; pairIndex < 50; pairIndex++){
-                pairs.push(await this.factoryContract.methods.allPairs(pairIndex).call())
-            }
-            console.timeEnd("Getting Pairs")
-        })
-    }
 }
 
 module.exports = Pancake
