@@ -5,6 +5,7 @@ alot
 
 ## Infos
 Flash Swaps only work with a ETH (BNB) pair?
+Loan money from different pair?
 
 ## Ganache-CLI
 ### Start Local Blockchain (using Ganache-CLI)
