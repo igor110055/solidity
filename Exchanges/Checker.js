@@ -1,11 +1,12 @@
 const Web3 = require("web3")
-const web3URL = "https://bsc-dataseed.binance.org/"
+let web3URL = "https://bsc-dataseed.binance.org/"
+web3URL = "wss://bsc-ws-node.nariox.org:443"
 const web3 = new Web3(web3URL)
 
 const Pancake = require("./Pancake/Pancake")
-const pancake = new Pancake(web3URL)
+const pancake = new Pancake(web3)
 const Biswap = require("./Biswap/Biswap")
-const biswap = new Biswap(web3URL)
+const biswap = new Biswap(web3)
 
 function tokens(n) {
     return Web3.utils.toWei(n, 'ether');
@@ -28,15 +29,15 @@ async function calculateExtrema(aToken0Reserve, aToken1Reserve, aFee, bToken0Res
 }
 
 async function main() {
-    const pRouterContract = new web3.eth.Contract(require("./pancakeRouterABI.json"), "0x10ED43C718714eb63d5aA57B78B54704E256024E")
-    const bRouterContract = new web3.eth.Contract(require("./biswapRouterABI.json"), "0x3a6d8cA21D1CF76F653A67577FA0D27453350dD8")
+    const pRouterContract = new web3.eth.Contract(require("./Pancake/ABIs/pancakeRouterABI.json"), "0x10ED43C718714eb63d5aA57B78B54704E256024E")
+    const bRouterContract = new web3.eth.Contract(require("./Biswap/ABIs/biswapRouterABI.json"), "0x3a6d8cA21D1CF76F653A67577FA0D27453350dD8")
     const bnbAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
     const cakeAddress = "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82"
 
     let [pBNBReserve, pCakeReserve, pFee] = await pancake.getReserves(bnbAddress, cakeAddress).catch(console.log)
     let [bBNBReserve, bCakeReserve, bFee] = await biswap.getReserves(bnbAddress, cakeAddress).catch(console.log)
 
-    bBNBReserve = bBNBReserve * 1.1
+    // bBNBReserve = bBNBReserve * 1.1
 
     let extrema = await calculateExtrema(pBNBReserve, pCakeReserve, pFee, bCakeReserve, bBNBReserve, bFee)
     if (extrema <= 0) {
@@ -48,7 +49,6 @@ async function main() {
     }
 
     const amount = tokens('1')
-
 
     const afterFirstSwap = (await pRouterContract.methods.getAmountsOut(amount, [bnbAddress, cakeAddress]).call())[1]
     const afterFirstSwapOwn = await pancake.getAmountOut(amount, pBNBReserve, pCakeReserve, pFee).catch(console.log)
@@ -65,6 +65,8 @@ async function main() {
     console.log((afterSecondSwap - amount) / 1E18)
     // console.log((afterSecondSwapOwn - amount) / 1E18)
     // console.log((amount - afterSecondSwapOwn) / 1E18)
+
+    await pancake.getPairs()
 }
 
 main()

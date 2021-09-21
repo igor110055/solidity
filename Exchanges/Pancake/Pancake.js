@@ -1,17 +1,14 @@
 const Exchange = require("../Exchange")
-const Web3 = require("web3")
 
 class Pancake extends Exchange {
-    constructor(web3URL) {
+    constructor(web3) {
         super();
         this.factoryABI = require("./ABIs/Factory.json")
         this.pairABI = require("./ABIs/Pair.json")
 
         this.factoryAddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
 
-        this.web3URL = web3URL
-
-        this.web3 = new Web3(this.web3URL)
+        this.web3 = web3
         this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
     }
 
@@ -36,14 +33,28 @@ class Pancake extends Exchange {
 
     async getAmountOut(amountIn, reserve0, reserve1, fee) {
         return new Promise(async (resolve, reject) => {
-            if (amountIn <= 0 || reserve0 <= 0 || reserve1 <= 0) {
+            if (amountIn <= 0 || reserve0 <= 0 || reserve1 <= 0)
                 return reject("At least 1 value is <= 0")
-            }
 
             let amountInWithFee = amountIn * (10000 - fee)
             let numerator = amountInWithFee * reserve1
             let denominator = reserve0 * 10000 + amountInWithFee
             return resolve(numerator / denominator)
+        })
+    }
+
+
+    async getPairs(){
+        return new Promise(async (resolve, reject) => {
+            const Web3 = require("web3")
+            this.web3 = new Web3("wss://bsc-ws-node.nariox.org:443")
+            console.time("Getting Pairs")
+            const pairsCount = await this.factoryContract.methods.allPairsLength.call().call()
+            let pairs = []
+            for(let pairIndex = 0; pairIndex < 50; pairIndex++){
+                pairs.push(await this.factoryContract.methods.allPairs(pairIndex).call())
+            }
+            console.timeEnd("Getting Pairs")
         })
     }
 }
