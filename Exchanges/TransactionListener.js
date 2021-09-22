@@ -101,5 +101,4 @@ async function savePairs() {
     }
 }
 
-// fs.writeFile("./Pancake/allKnownPairs.json", JSON.stringify(["help": "something"], null, 3), () => {})
 setInterval(fetch, 1000)

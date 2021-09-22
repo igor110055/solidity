@@ -6,6 +6,10 @@ alot
 ## Infos
 Flash Swaps only work with a ETH (BNB) pair?
 Loan money from different pair?
+Use pancakeswap alone for 2 different pairs with same token?
+> https://bscscan.com/tx/0x6de133cd2122ccacc80958f67393082aed80012361d907c51a2899ee73d45044
+> https://bscscan.com/address/0xd58452191837ed8f2380f76dd7bd49a23489e3f2
+> https://bscscan.com/address/0x9f6d9842615a68b5b57b9e52871ddc27609915f8
 
 ## Ganache-CLI
 ### Start Local Blockchain (using Ganache-CLI)
