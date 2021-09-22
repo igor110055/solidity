@@ -9,10 +9,10 @@ How to use this config:
  */
 const config = {
     "Biswap": {
-        "total": 10
+        "total": 5
     },
     "Pancake": {
-        "total": 20
+        "total": 10
     }
 }
 
