@@ -63,10 +63,28 @@ async function main() {
     console.log("Calculated:", afterSecondSwapOwn / 1E18)
     console.log("Difference:", (afterSecondSwap - afterSecondSwapOwn) / 1E18)
     console.log((afterSecondSwap - amount) / 1E18)
-    // console.log((afterSecondSwapOwn - amount) / 1E18)
-    // console.log((amount - afterSecondSwapOwn) / 1E18)
-
-    await pancake.getPairs()
 }
 
-main()
+// main()
+
+web3.extend({
+    property: 'eth',
+    methods: [new web3.extend.Method({
+        name: 'getBlockByNumber',
+        call: 'eth_getBlockByNumber',
+        params: 2,
+        inputFormatter: [web3.extend.formatters.inputBlockNumberFormatter, v => !!v],
+        outputFormatter: web3.extend.formatters.outputBlockFormatter
+    })]
+});
+web3.utils.hexToNumber = v => {
+    if (!v) return v;
+    try {
+        return numberToBN(v).toNumber();
+    } catch (e) {
+        return numberToBN(v).toString();
+    }
+};
+web3.eth.getBlock(11111111, true).then(result => {
+    console.log(result)
+})
