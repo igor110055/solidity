@@ -67,24 +67,12 @@ async function main() {
 
 // main()
 
-web3.extend({
-    property: 'eth',
-    methods: [new web3.extend.Method({
-        name: 'getBlockByNumber',
-        call: 'eth_getBlockByNumber',
-        params: 2,
-        inputFormatter: [web3.extend.formatters.inputBlockNumberFormatter, v => !!v],
-        outputFormatter: web3.extend.formatters.outputBlockFormatter
-    })]
-});
-web3.utils.hexToNumber = v => {
-    if (!v) return v;
-    try {
-        return numberToBN(v).toNumber();
-    } catch (e) {
-        return numberToBN(v).toString();
-    }
-};
-web3.eth.getBlock(11111111, true).then(result => {
-    console.log(result)
+web3.eth.getBlock(11111111, true).then(block => {
+    console.log(block)
 })
+// var subscription = web3.eth.subscribe('pendingTransactions', function (error, result) {
+//     if (!error)
+//         console.log(result);
+// }).on("data", function (transaction) {
+//     console.log(transaction);
+// });
