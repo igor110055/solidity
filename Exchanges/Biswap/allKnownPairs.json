@@ -1,78 +1,78 @@
 {
    "0x965f527d9159dce6288a2219db51fc6eef120dd1": {
-      "sold": 409,
-      "routed": 281,
-      "bought": 541
+      "sold": 440,
+      "routed": 296,
+      "bought": 569
    },
    "0xe9e7cea3dedca5984780bafc599bd69add087d56": {
-      "sold": 486,
-      "routed": 74,
-      "bought": 346
+      "sold": 514,
+      "routed": 77,
+      "bought": 374
    },
    "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c": {
-      "sold": 1532,
-      "routed": 453,
-      "bought": 1724
+      "sold": 1625,
+      "routed": 485,
+      "bought": 1807
    },
    "0xaec945e04baf28b135fa7c640f624f8d90f1c3a6": {
-      "sold": 17,
+      "sold": 18,
       "routed": 0,
       "bought": 7
    },
    "0x7083609fce4d1d8dc0c979aab8c869ea2c873402": {
-      "sold": 92,
+      "sold": 98,
       "routed": 0,
-      "bought": 68
+      "bought": 71
    },
    "0x55d398326f99059ff775485246999027b3197955": {
-      "sold": 1328,
-      "routed": 379,
-      "bought": 1295
+      "sold": 1386,
+      "routed": 407,
+      "bought": 1368
    },
    "0x2170ed0880ac9a755fd29b2688956bd959f933f8": {
-      "sold": 1001,
-      "routed": 57,
-      "bought": 986
+      "sold": 1038,
+      "routed": 61,
+      "bought": 1026
    },
    "0x0d8ce2a99bb6e3b7db580ed848240e4a0f9ae153": {
-      "sold": 46,
+      "sold": 50,
       "routed": 0,
       "bought": 48
    },
    "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe": {
       "sold": 78,
       "routed": 0,
-      "bought": 66
+      "bought": 67
    },
    "0xbb46693ebbea1ac2070e59b4d043b47e2e095f86": {
-      "sold": 101,
+      "sold": 107,
       "routed": 0,
-      "bought": 125
+      "bought": 127
    },
    "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c": {
-      "sold": 641,
+      "sold": 656,
       "routed": 20,
-      "bought": 515
+      "bought": 541
    },
    "0xfb62ae373aca027177d1c18ee0862817f9080d08": {
-      "sold": 15,
+      "sold": 16,
       "routed": 0,
-      "bought": 156
+      "bought": 166
    },
    "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82": {
-      "sold": 70,
+      "sold": 78,
       "routed": 0,
-      "bought": 75
+      "bought": 78
    },
    "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47": {
-      "sold": 93,
+      "sold": 95,
       "routed": 0,
-      "bought": 50
+      "bought": 52
    },
    "0x715d400f88c167884bbcc41c5fea407ed4d2f8a0": {
       "sold": 10,
       "routed": 0,
-      "bought": 3
+      "bought": 4
    },
    "0x755f34709e369d37c6fa52808ae84a32007d1155": {
       "sold": 8,
@@ -80,19 +80,19 @@
       "bought": 0
    },
    "0xbf5140a22578168fd562dccf235e5d43a02ce9b1": {
-      "sold": 45,
+      "sold": 46,
       "routed": 0,
       "bought": 40
    },
    "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd": {
-      "sold": 66,
+      "sold": 69,
       "routed": 0,
-      "bought": 53
+      "bought": 55
    },
    "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d": {
-      "sold": 23,
+      "sold": 30,
       "routed": 0,
-      "bought": 18
+      "bought": 19
    },
    "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3": {
       "sold": 4,
@@ -110,14 +110,14 @@
       "bought": 14
    },
    "0x8f0528ce5ef7b51152a59745befdd91d97091d2f": {
-      "sold": 1,
+      "sold": 2,
       "routed": 0,
-      "bought": 2
+      "bought": 3
    },
    "0xd15c444f1199ae72795eba15e8c1db44e47abf62": {
-      "sold": 21,
+      "sold": 22,
       "routed": 0,
-      "bought": 2
+      "bought": 3
    },
    "0xba2ae424d960c26247dd6c32edc70b295c744c43": {
       "sold": 34,
@@ -127,7 +127,7 @@
    "0xca3f508b8e4dd382ee878a314789373d80a5190a": {
       "sold": 0,
       "routed": 0,
-      "bought": 1
+      "bought": 2
    },
    "0x23396cf899ca06c4472205fc903bdb4de249d6fc": {
       "sold": 5,
@@ -135,9 +135,9 @@
       "bought": 3
    },
    "0x85eac5ac2f758618dfa09bdbe0cf174e7d574d5b": {
-      "sold": 20,
+      "sold": 21,
       "routed": 0,
-      "bought": 9
+      "bought": 10
    },
    "0xf4ed363144981d3a65f42e7d0dc54ff9eef559a1": {
       "sold": 3,
@@ -155,14 +155,14 @@
       "bought": 1
    },
    "0x3203c9e46ca618c8c1ce5dc67e7e9d75f5da2377": {
-      "sold": 14,
+      "sold": 17,
       "routed": 0,
       "bought": 5
    },
    "0x8595f9da7b868b1822194faed312235e43007b49": {
-      "sold": 0,
+      "sold": 1,
       "routed": 0,
-      "bought": 3
+      "bought": 5
    },
    "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63": {
       "sold": 4,
@@ -180,7 +180,7 @@
       "bought": 1
    },
    "0xb86abcb37c3a4b64f74f59301aff131a1becc787": {
-      "sold": 2,
+      "sold": 3,
       "routed": 0,
       "bought": 0
    },
@@ -190,9 +190,9 @@
       "bought": 1
    },
    "0x9f589e3eabe42ebc94a44727b3f3531c0c877809": {
-      "sold": 5,
+      "sold": 8,
       "routed": 0,
-      "bought": 6
+      "bought": 7
    },
    "0x8443f091997f06a61670b735ed92734f5628692f": {
       "sold": 2,
@@ -205,7 +205,7 @@
       "bought": 1
    },
    "0xd13e7d22bee61d97cbb70592af680e7047d85cfe": {
-      "sold": 1,
+      "sold": 2,
       "routed": 0,
       "bought": 0
    },
@@ -235,6 +235,16 @@
       "bought": 1
    },
    "0x47bead2563dcbf3bf2c9407fea4dc236faba485a": {
+      "sold": 1,
+      "routed": 0,
+      "bought": 0
+   },
+   "0xaef0d72a118ce24fee3cd1d43d383897d05b4e99": {
+      "sold": 0,
+      "routed": 0,
+      "bought": 4
+   },
+   "0xa1faa113cbe53436df28ff0aee54275c13b40975": {
       "sold": 1,
       "routed": 0,
       "bought": 0
