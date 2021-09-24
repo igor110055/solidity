@@ -2,7 +2,10 @@ const Exchange = require("../Exchange")
 
 class Pancake extends Exchange {
     constructor(web3) {
+        if (web3 === undefined)
+            throw new Error("Constructor not satisfied")
         super();
+
         this.factoryABI = require("./ABIs/Factory.json")
         this.pairABI = require("./ABIs/Pair.json")
 
@@ -40,6 +43,13 @@ class Pancake extends Exchange {
             let numerator = amountInWithFee * reserve1
             let denominator = reserve0 * 10000 + amountInWithFee
             return resolve(numerator / denominator)
+        })
+    }
+
+    async getTotalPairs(){
+        return new Promise(async resolve => {
+            const allPairsLength = await this.factoryContract.methods.allPairsLength.call().call()
+            return resolve(allPairsLength)
         })
     }
 }

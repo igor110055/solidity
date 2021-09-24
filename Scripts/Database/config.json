@@ -1,8 +1,17 @@
 {
-   "databaseDirectory": "./files/database.db",
+   "databaseDirectory": "/files/database.db",
    "runSetup": false,
    "tables": {
-      "Pairs": {
+      "PancakePairs": {
+         "number": "integer primary key",
+         "address": "text",
+         "token0": "text",
+         "token1": "text",
+         "reserve0": "text",
+         "reserve1": "text"
+      },
+      "BiswapPairs": {
+         "number": "integer primary key",
          "address": "text",
          "token0": "text",
          "token1": "text",
