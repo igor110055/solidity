@@ -38,10 +38,10 @@ module.exports = class Database {
         this.db.run(insertCommand)
     }
 
-    async getData(table, condition = "") {
+    async getData(table, columns="*", condition = "") {
         return new Promise((resolve => {
             // @formatter:off
-            this.db.all(`select * from ${table} ${condition}`, (err, res) => {
+            this.db.all(`select ${columns} from ${table} ${condition}`, (err, res) => {
             // @formatter:on
                 resolve(res)
             })
