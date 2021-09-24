@@ -26,14 +26,22 @@ module.exports = class Database {
         }
     }
 
-    saveData(table, jsonData) {
-        let values = []
-        for (const columnValue in jsonData)
-            values.push(`"${jsonData[columnValue]}"`)
+    saveData(table, jsonData = "") {
+        let insertCommand
+        if (jsonData !== "") {
+            let values = []
+            for (const columnValue in jsonData)
+                values.push(`"${jsonData[columnValue]}"`)
+            // @formatter:off
+            insertCommand = `insert into ${table} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
+            // @formatter:on
+        } else {
+            // @formatter:off
+            insertCommand = `insert into ${table} default values`
+            // @formatter:on
+        }
 
-        // @formatter:off
-        this.db.run(`insert into ${table} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`)
-        // @formatter:on
+        this.db.run(insertCommand)
     }
 
     async getData(table, columns = "*", condition = "") {
