@@ -1,12 +1,13 @@
 {
-  "runSetup": false,
-  "tables": {
-    "Pairs": {
-      "address": "text",
-      "token0": "text",
-      "token1": "text",
-      "reserve0": "text",
-      "reserve1": "text"
-    }
-  }
+   "databaseDirectory": "./files/database.db",
+   "runSetup": false,
+   "tables": {
+      "Pairs": {
+         "address": "text",
+         "token0": "text",
+         "token1": "text",
+         "reserve0": "text",
+         "reserve1": "text"
+      }
+   }
 }
