@@ -33,11 +33,11 @@ Gives you direct access to all deployed smart-contracts (used for testing and de
 > truffle test
 
 ## Fixes:
-###Web3 BN fix:
+### Web3 BN fix:
 > node_modules/number-to-bn/node_modules/bn.js/lib/bn.js
 
 Change:
 > assert(false, 'Number can only safely store up to 53 bits');
->
+
 To
 > ret = Number.MAX_SAFE_INTEGER;
