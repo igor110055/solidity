@@ -33,7 +33,7 @@ contract TestSwapContract is IApeCallee {
     event Log(string message, uint value);
 
 
-    function execute(address _token0, address _token1, uint _amount, string[] memory _providerPath) public payable {
+    function execute(address _token0, address _token1, uint _amount, string[] memory_providerPath) public payable {
         address pair = FACTORY.getPair(_token0, _token1);
         require(pair != address(0), "Pair does not exist");
 
