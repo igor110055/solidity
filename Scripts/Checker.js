@@ -3,9 +3,9 @@ let web3URL = "https://bsc-dataseed.binance.org/"
 web3URL = "wss://bsc-ws-node.nariox.org:443"
 const web3 = new Web3(web3URL)
 
-const Pancake = require("./Pancake/Pancake")
+const Pancake = require("./Exchanges/Pancake/Pancake")
 const pancake = new Pancake(web3)
-const Biswap = require("./Biswap/Biswap")
+const Biswap = require("./Exchanges/Biswap/Biswap")
 const biswap = new Biswap(web3)
 
 function tokens(n) {

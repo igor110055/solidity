@@ -1,12 +1,12 @@
-const Exchange = require("../_Exchange")
+const Exchange = require("../Exchange")
 
-class Biswap extends Exchange {
+class Pancake extends Exchange {
     constructor(web3) {
         super();
         this.factoryABI = require("./ABIs/Factory.json")
         this.pairABI = require("./ABIs/Pair.json")
 
-        this.factoryAddress = "0x858E3312ed3A876947EA49d572A7C42DE08af7EE"
+        this.factoryAddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
 
         this.web3 = web3
         this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
@@ -26,7 +26,7 @@ class Biswap extends Exchange {
             return resolve([
                 address0InPair === addressIn ? _reserve0 : _reserve1,
                 address0InPair === addressOut ? _reserve0 : _reserve1,
-                (await pairContract.methods.swapFee.call().call()) * 10
+                25
             ])
         })
     }
@@ -44,4 +44,4 @@ class Biswap extends Exchange {
     }
 }
 
-module.exports = Biswap
+module.exports = Pancake
