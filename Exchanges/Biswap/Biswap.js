@@ -1,4 +1,4 @@
-const Exchange = require("../Exchange")
+const Exchange = require("../_Exchange")
 
 class Biswap extends Exchange {
     constructor(web3) {

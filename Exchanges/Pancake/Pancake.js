@@ -1,4 +1,4 @@
-const Exchange = require("../Exchange")
+const Exchange = require("../_Exchange")
 
 class Pancake extends Exchange {
     constructor(web3) {
