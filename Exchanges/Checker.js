@@ -63,10 +63,16 @@ async function main() {
     console.log("Calculated:", afterSecondSwapOwn / 1E18)
     console.log("Difference:", (afterSecondSwap - afterSecondSwapOwn) / 1E18)
     console.log((afterSecondSwap - amount) / 1E18)
-    // console.log((afterSecondSwapOwn - amount) / 1E18)
-    // console.log((amount - afterSecondSwapOwn) / 1E18)
-
-    await pancake.getPairs()
 }
 
-main()
+// main()
+
+web3.eth.getBlock(11111111, true).then(block => {
+    console.log(block)
+})
+// var subscription = web3.eth.subscribe('pendingTransactions', function (error, result) {
+//     if (!error)
+//         console.log(result);
+// }).on("data", function (transaction) {
+//     console.log(transaction);
+// });

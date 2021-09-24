@@ -7,9 +7,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "abi-decoder": "^2.4.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "truffle": "^5.4.10",
-    "web3": "^1.5.2"
+    "web3": "^1.5.3"
   }
 }
