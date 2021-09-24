@@ -27,23 +27,20 @@ module.exports = class Database {
     }
 
     saveData(table, jsonData) {
-        let insertCommand;
         let values = []
         for (const columnValue in jsonData)
             values.push(`"${jsonData[columnValue]}"`)
 
         // @formatter:off
-        insertCommand = `insert into ${table} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
+        this.db.run(`insert into ${table} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`)
         // @formatter:on
-
-        this.db.run(insertCommand)
     }
 
     async getData(table, columns = "*", condition = "") {
         return new Promise((resolve => {
             // @formatter:off
             this.db.all(`select ${columns} from ${table} ${condition}`, (err, res) => {
-            // @formatter:on
+                // @formatter:on
                 resolve(res)
             })
         }))
@@ -53,7 +50,7 @@ module.exports = class Database {
         return new Promise((resolve => {
             // @formatter:off
             this.db.all(command, (err, res) => {
-            // @formatter:on
+                // @formatter:on
                 resolve(res)
             })
         }))
