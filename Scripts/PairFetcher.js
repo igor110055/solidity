@@ -3,14 +3,9 @@ module.exports = class PairFetcher {
         this.database = database
 
         this.interval = 60000
-        this.exchanges = []
-        for (let i = 1; i < arguments.length; i++) {
-            this.exchanges.push(arguments[i])
-        }
-
         const ticker = () => {
-            for (const exchange of this.exchanges) {
-                this.updateDatabase(exchange[0], exchange[1]).then()
+            for (let i = 1; i < arguments.length; i++) {
+                this.updateDatabase(arguments[i][0], arguments[i][1]).then()
             }
         }
         ticker()
