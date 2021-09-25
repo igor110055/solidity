@@ -1,7 +1,8 @@
 # Arbitrage Flash Loan Bot
 
 ## TODO
-- Remove fetch limit from PairFetcher.js
+- Create algorythm for finding good trade pairs
+- implement smart contract
 
 ## Infos
 Flash Swaps only work with a ETH (BNB) pair?
