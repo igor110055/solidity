@@ -8,11 +8,13 @@ module.exports = class PairFetcher {
             this.exchanges.push(arguments[i])
         }
 
-        setInterval(() => {
+        const ticker = () => {
             for (const exchange of this.exchanges) {
                 this.updateDatabase(exchange[0], exchange[1]).then()
             }
-        }, this.interval)
+        }
+        ticker()
+        setInterval(ticker, this.interval)
     }
 
     async fetchPairs(exchange, pairTable) {
