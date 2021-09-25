@@ -54,7 +54,7 @@ module.exports = class Database {
         }))
     }
 
-    async customCommand(command) {
+    async customGetCommand(command) {
         return new Promise((resolve => {
             // @formatter:off
             this.db.all(command, (err, res) => {
@@ -62,5 +62,21 @@ module.exports = class Database {
                 resolve(res)
             })
         }))
+    }
+
+    async updateData(table, jsonConditions, jsonData) {
+        if (jsonConditions === undefined || jsonData === undefined) {
+            throw new Error("Enter some values bro")
+        } else {
+            let formattedConditions = []
+            for (const condition in jsonConditions) {
+                formattedConditions.push(`${condition}="${jsonConditions[condition]}"`)
+            }
+            let formattedValues = []
+            for (const column in jsonData) {
+                formattedValues.push(`${column}="${jsonData[column]}"`)
+            }
+            this.db.run(`update ${table} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`)
+        }
     }
 }

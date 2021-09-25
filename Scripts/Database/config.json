@@ -8,7 +8,8 @@
          "token0": "text",
          "token1": "text",
          "reserve0": "text",
-         "reserve1": "text"
+         "reserve1": "text",
+         "swapFee": "int"
       },
       "BiswapPairs": {
          "number": "integer primary key",
@@ -16,7 +17,8 @@
          "token0": "text",
          "token1": "text",
          "reserve0": "text",
-         "reserve1": "text"
+         "reserve1": "text",
+         "swapFee": "int"
       }
    }
 }
