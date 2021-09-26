@@ -3,8 +3,8 @@ module.exports = class PairFetcher {
         this.database = database
 
         this.interval = 60000
-        this.parallelFetchLimit = 0
-        this.showStatus = false
+        this.parallelFetchLimit = 200
+        this.showStatus = true
 
         this.exchanges = []
         for (let i = 1; i < arguments.length; i++) {
