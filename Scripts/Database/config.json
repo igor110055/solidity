@@ -1,44 +1,32 @@
 {
-  "databaseDirectory": "/files/",
-  "databases": {
-    "dbPancakeV1": {
-      "tables": {
-        "PancakePairs": {
-          "number": "integer primary key",
-          "address": "text",
-          "token0": "text",
-          "token1": "text",
-          "reserve0": "text",
-          "reserve1": "text",
-          "swapFee": "int"
-        }
-      }
+  "databaseDirectory": "/tables/",
+  "tables": {
+    "PancakeV1Pairs": {
+      "number": "integer primary key",
+      "address": "text",
+      "token0": "text",
+      "token1": "text",
+      "reserve0": "text",
+      "reserve1": "text",
+      "swapFee": "int"
     },
-    "dbPancakeV2": {
-      "tables": {
-        "PancakePairs": {
-          "number": "integer primary key",
-          "address": "text",
-          "token0": "text",
-          "token1": "text",
-          "reserve0": "text",
-          "reserve1": "text",
-          "swapFee": "int"
-        }
-      }
+    "PancakeV2Pairs": {
+      "number": "integer primary key",
+      "address": "text",
+      "token0": "text",
+      "token1": "text",
+      "reserve0": "text",
+      "reserve1": "text",
+      "swapFee": "int"
     },
-    "dbOther": {
-      "tables": {
-        "BiswapPairs": {
-          "number": "integer primary key",
-          "address": "text",
-          "token0": "text",
-          "token1": "text",
-          "reserve0": "text",
-          "reserve1": "text",
-          "swapFee": "int"
-        }
-      }
+    "BiswapPairs": {
+      "number": "integer primary key",
+      "address": "text",
+      "token0": "text",
+      "token1": "text",
+      "reserve0": "text",
+      "reserve1": "text",
+      "swapFee": "int"
     }
   }
 }

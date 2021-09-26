@@ -14,13 +14,12 @@ class Biswap extends Exchange {
         this.factoryAddress = "0x858E3312ed3A876947EA49d572A7C42DE08af7EE"
         this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
 
-        this.databaseName = "dbOther"
         this.tableName = "BiswapPairs"
     }
 
     async getSwapFee(pairContract){
         return new Promise(async resolve => {
-            return resolve((await pairContract.methods.swapFee.call().call()) * 10)
+            return resolve(10)
         })
     }
 }

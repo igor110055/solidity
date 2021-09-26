@@ -6,76 +6,74 @@ module.exports = class Database {
 
         this.sqlite3 = require("sqlite3")
 
-        this.databases = {}
+        const tableNames = Object.keys(this.config["tables"])
+        if (tableNames.length === 0) {
+            throw new Error("Specify table in config.json first.")
+        } else {
+            this.databases = []
+            const tableNames = Object.keys(this.config["tables"])
 
-        for (const database in this.config["databases"]) {
-            const databasePath = `${__dirname}${this.config["databaseDirectory"]}${database}.db`
-            this.databases[database] = new this.sqlite3.Database(databasePath)
-            this._setupTables(database)
+            for (let i = 0; i < tableNames.length; i++) {
+                const databasePath = `${__dirname}${this.config["databaseDirectory"]}${tableNames[i]}.db`
+                const tempDatabase = new this.sqlite3.Database(databasePath)
+                this._setupTable(tempDatabase, tableNames[i])
+                this.databases.push(tempDatabase)
+
+                if (i === 0) {
+                    this.db = tempDatabase
+                } else {
+                    this.customCommand(`attach database '${databasePath}' as ${tableNames[i]}`)
+                }
+            }
         }
     }
 
-    _setupTables(databaseName) {
-        const tables = this.config["databases"][databaseName]["tables"]
-
+    _setupTable(database, tableName) {
         // @formatter:off
-        this.databases[databaseName].all("SELECT name FROM sqlite_master WHERE type='table'", (error, result) => {
+        database.all("SELECT name FROM sqlite_master WHERE type='table'", (error, result) => {
         // @formatter:on
             const existingTables = result.map(t => t["name"])
 
-            for (const table in tables) {
-                if (!existingTables.includes(table)) {
-                    let columns = []
-                    for (const column in tables[table])
-                        columns.push(`${column} ${tables[table][column]}`)
-
-                    // @formatter:off
-                    this.databases[databaseName].run(`create table ${table} (${columns.join(", ")})`)
-                    // @formatter:on
-                }
+            if (!existingTables.includes(tableName)) {
+                let columns = []
+                for (const column in this.config["tables"][tableName])
+                    columns.push(`${column} ${this.config["tables"][tableName][column]}`)
+                // @formatter:off
+                database.run(`create table ${tableName} (${columns.join(", ")})`)
+                // @formatter:on
             }
         })
     }
 
-    saveData(exchange, jsonData = "") {
+    saveData(tableName, jsonData = "") {
         let insertCommand
         if (jsonData !== "") {
             let values = []
             for (const columnValue in jsonData)
                 values.push(`"${jsonData[columnValue]}"`)
             // @formatter:off
-            insertCommand = `insert into ${exchange.tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
+            insertCommand = `insert into ${tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
             // @formatter:on
         } else {
             // @formatter:off
-            insertCommand = `insert into ${exchange.tableName} default values`
+            insertCommand = `insert into ${tableName} default values`
             // @formatter:on
         }
 
-        this.databases[exchange.databaseName].run(insertCommand)
+        this.db.run(insertCommand)
     }
 
-    async getData(exchange, columns = "*", condition = "") {
+    async getData(tableName, columns = "*", condition = "") {
         return new Promise((resolve => {
             // @formatter:off
-            this.databases[exchange.databaseName].all(`select ${columns} from ${exchange.tableName} ${condition}`, (error, result) => {
+            this.db.all(`select ${columns} from ${tableName} ${condition}`, (_, result) => {
             // @formatter:on
                 resolve(result)
             })
         }))
     }
 
-    async customGetCommand(exchange, command) {
-        return new Promise((resolve => {
-            // @formatter:off
-            this.databases[exchange.databaseName].all(command, (err, res) => {
-            // @formatter:on
-                resolve(res)
-            })
-        }))
-    }
-
-    async updateData(exchange, jsonConditions, jsonData) {
+    async updateData(tableName, jsonConditions, jsonData) {
         if (jsonConditions === undefined || jsonData === undefined) {
             throw new Error("Enter some values bro")
         } else {
@@ -90,10 +88,22 @@ module.exports = class Database {
             }
 
             // @formatter:off
-            this.databases[exchange.databaseName].run(
-                `update ${exchange.tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`
-            )
+            this.db.run(`update ${tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`)
             // @formatter:on
         }
+    }
+
+    customCommand(command) {
+        this.db.run(command)
+    }
+
+    async customGetCommand(command) {
+        return new Promise((resolve => {
+            // @formatter:off
+            this.db.all(command, (_, result) => {
+            // @formatter:on
+                resolve(result)
+            })
+        }))
     }
 }

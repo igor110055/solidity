@@ -14,8 +14,7 @@ class PancakeV2 extends Exchange {
         this.factoryAddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
         this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
 
-        this.databaseName = "dbPancakeV2"
-        this.tableName = "PancakePairs"
+        this.tableName = "PancakeV2Pairs"
     }
 
     async getSwapFee(pairContract){
