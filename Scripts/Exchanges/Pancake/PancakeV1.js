@@ -1,6 +1,6 @@
 const Exchange = require("../Exchange")
 
-class PancakeV2 extends Exchange {
+class PancakeV1 extends Exchange {
     constructor(web3) {
         if (web3 === undefined)
             throw new Error("Constructor not satisfied")
@@ -24,4 +24,4 @@ class PancakeV2 extends Exchange {
     }
 }
 
-module.exports = PancakeV2
+module.exports = PancakeV1
