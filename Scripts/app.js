@@ -6,10 +6,18 @@ const Web3 = require("web3")
 const web3 = new Web3("wss://bsc.getblock.io/mainnet/?api_key=03e21de6-4d4d-4800-baef-26effcc2f668")
 
 const database = new (require("./Database/Database"))
-const pancake = new (require("./Exchanges/Pancake/Pancake"))(web3)
+const pancakeV1 = new (require("./Exchanges/Pancake/PancakeV1"))(web3)
+const pancakeV2 = new (require("./Exchanges/Pancake/PancakeV2"))(web3)
 const biswap = new (require("./Exchanges/Biswap/Biswap"))(web3)
 
-const fetcher = new (require("./PairFetcher"))(database,
-    [pancake, "PancakePairs"],
-    [biswap, "BiswapPairs"]
-)
+const fetcher = new (require("./PairFetcher"))(database, pancakeV1, pancakeV2, biswap)
+
+// const factory01 = new (require("./Factory01"))(database,
+//     [pancake, "PancakePairs"],
+//     [biswap, "BiswapPairs"]
+// )
+// factory01.checkToken("0x3Ef99822759A2192e7A82f64484e79e89cd90d52").then(result => {
+//     console.log(result)
+// }).catch(error => {
+//     console.log(error)
+// })
