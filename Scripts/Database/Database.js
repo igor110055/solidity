@@ -5,7 +5,9 @@ module.exports = class Database {
         this.saveConfig = () => this.fs.writeFileSync(__dirname + "/config.json", JSON.stringify(this.config, null, 3))
 
         this.sqlite3 = require("sqlite3")
+    }
 
+    async setup() {
         const tableNames = Object.keys(this.config["tables"])
         if (tableNames.length === 0) {
             throw new Error("Specify table in config.json first.")
@@ -22,7 +24,7 @@ module.exports = class Database {
                 if (i === 0) {
                     this.db = tempDatabase
                 } else {
-                    this.customCommand(`attach database '${databasePath}' as ${tableNames[i]}`)
+                    await this.customCommand(`attach database '${databasePath}' as ${tableNames[i]}`)
                 }
             }
         }
@@ -68,7 +70,7 @@ module.exports = class Database {
             // @formatter:off
             this.db.all(`select ${columns} from ${tableName} ${condition}`, (_, result) => {
             // @formatter:on
-                resolve(result)
+                return resolve(result)
             })
         }))
     }
@@ -93,16 +95,18 @@ module.exports = class Database {
         }
     }
 
-    customCommand(command) {
-        this.db.run(command)
+    async customCommand(command) {
+        return new Promise(resolve => {
+            this.db.run(command, (_, result) => {
+                return resolve(result)
+            })
+        })
     }
 
     async customGetCommand(command) {
         return new Promise((resolve => {
-            // @formatter:off
             this.db.all(command, (_, result) => {
-            // @formatter:on
-                resolve(result)
+                return resolve(result)
             })
         }))
     }
