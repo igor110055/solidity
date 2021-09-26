@@ -11,21 +11,27 @@ async function main() {
     const database = new (require("./Database/Database"))
     await database.setup()
 
+    const calculator = new (require("./Tools/Calculator"))
+
     const pancakeV1 = new (require("./Exchanges/Pancake/PancakeV1"))(web3)
     const pancakeV2 = new (require("./Exchanges/Pancake/PancakeV2"))(web3)
     const biswap = new (require("./Exchanges/Biswap/Biswap"))(web3)
 
-    const fetcher = new (require("./PairFetcher"))(database, pancakeV1, pancakeV2, biswap)
+    const fetcher = new (require("./Tools/PairFetcher"))(database, pancakeV1, pancakeV2, biswap)
 
-    // const factory01 = new (require("./Factory01"))(database,
-    //     [pancake, "PancakePairs"],
-    //     [biswap, "BiswapPairs"]
-    // )
-    // factory01.checkToken("0x3Ef99822759A2192e7A82f64484e79e89cd90d52").then(result => {
-    //     console.log(result)
-    // }).catch(error => {
-    //     console.log(error)
-    // })
+    // const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, pancakeV2, biswap)
+
+    // const bestPairs = await basicFactory.getBestTokens()
+    // for (const pair of bestPairs) {
+    // const bnbAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+    // const cakeAddress = "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82"
+    //     basicFactory.checkPair(bnbAddress, cakeAddress).then(result => {
+    //         console.log(result["profit"] / 1E18)
+    //     }).catch(reason => {
+    //         console.log(reason)
+    //     })
+        // break
+    // }
 }
 
 main().then()

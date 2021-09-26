@@ -8,20 +8,20 @@ module.exports = class Exchange {
         throw new Error("You need to overwrite this function.")
     }
 
-    async getReserves(addressIn, addressOut) {
+    async getReserves(token0, token1) {
         return new Promise(async (resolve, reject) => {
-            const pairAddress = await this.factoryContract.methods.getPair(addressIn, addressOut).call()
+            const pairAddress = await this.factoryContract.methods.getPair(token0, token1).call()
             if (pairAddress === "0x0000000000000000000000000000000000000000")
                 return reject("Not a valid pair")
 
             const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
             const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
 
-            const address0InPair = await pairContract.methods.token0.call().call()
+            const token0InPair = await pairContract.methods.token0.call().call()
 
             return resolve([
-                address0InPair === addressIn ? _reserve0 : _reserve1,
-                address0InPair === addressOut ? _reserve0 : _reserve1,
+                token0InPair === token0 ? _reserve0 : _reserve1,
+                token0InPair === token1 ? _reserve0 : _reserve1,
                 await this.getSwapFee(pairContract)
             ])
         })
