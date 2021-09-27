@@ -5,28 +5,19 @@
       "number": "integer primary key",
       "address": "text",
       "token0": "text",
-      "token1": "text",
-      "reserve0": "text",
-      "reserve1": "text",
-      "swapFee": "int"
+      "token1": "text"
     },
     "PancakeV2Pairs": {
       "number": "integer primary key",
       "address": "text",
       "token0": "text",
-      "token1": "text",
-      "reserve0": "text",
-      "reserve1": "text",
-      "swapFee": "int"
+      "token1": "text"
     },
     "BiswapPairs": {
       "number": "integer primary key",
       "address": "text",
       "token0": "text",
-      "token1": "text",
-      "reserve0": "text",
-      "reserve1": "text",
-      "swapFee": "int"
+      "token1": "text"
     }
   }
 }

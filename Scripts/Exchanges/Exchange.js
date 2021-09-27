@@ -48,25 +48,19 @@ module.exports = class Exchange {
 
     async getPair(number) {
         return new Promise(async (resolve, reject) => {
-            let pairAddress;
             try {
-                pairAddress = await this.factoryContract.methods.allPairs(number).call()
+                const pairAddress = await this.factoryContract.methods.allPairs(number).call()
                 if (pairAddress === "0x0000000000000000000000000000000000000000")
                     return reject("Not a valid pair")
 
                 const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
-                const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
-
                 const token0 = await pairContract.methods.token0.call().call()
                 const token1 = await pairContract.methods.token1.call().call()
 
                 return resolve({
                     "address": pairAddress,
                     "token0": token0,
-                    "token1": token1,
-                    "reserve0": _reserve0,
-                    "reserve1": _reserve1,
-                    "swapFee": await this.getSwapFee(pairContract)
+                    "token1": token1
                 })
             } catch (e) {
                 return reject(e.toString())
