@@ -18,7 +18,8 @@ class Calculator {
         amountInWithFee = afterSwapOne * (10000 - bFee)
         numerator = amountInWithFee * bToken0Reserve
         denominator = bToken1Reserve * 10000 + amountInWithFee
-        return (numerator / denominator) - amountIn
+        const output = ((numerator / denominator) - amountIn).toString()
+        return output.split(".")[0]
     }
 }
 

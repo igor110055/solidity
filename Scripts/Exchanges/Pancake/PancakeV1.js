@@ -14,6 +14,10 @@ class PancakeV1 extends Exchange {
         this.factoryAddress = "0xBCfCcbde45cE874adCB698cC183deBcF17952812"
         this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
 
+        this.routerABI = require("./ABIs/Router.json")
+        this.routerAddress = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F"
+        this.routerContract = new this.web3.eth.Contract(this.routerABI, this.routerAddress)
+
         this.tableName = "PancakeV1Pairs"
     }
 

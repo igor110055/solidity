@@ -7,12 +7,10 @@ module.exports = class BasicFactory {
         for (let i = 2; i < arguments.length; i++) {
             this.exchanges.push(arguments[i])
         }
-
-        this.WETH = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
     }
 
     async checkPair(token0, token1) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async resolve => {
             let allExchanges = []
             let allPairs = []
             for (const exchange of this.exchanges) {
@@ -23,7 +21,7 @@ module.exports = class BasicFactory {
                         (token0 = "${token1}" and token1 = "${token0}")
                 `)
 
-                if (pairs.length > -1) {
+                if (pairs.length > 0) {
                     let pair = pairs[0]
                     pair = {
                         number: 1,
@@ -78,11 +76,14 @@ module.exports = class BasicFactory {
                         "amountIn": amountIn,
                         "profit": maxProfit
                     })
-                } else {
-                    return reject("Not profitable.")
                 }
             }
-            return reject("Not enough exchanges support this pair.")
+            return resolve({
+                "firstExchange": undefined,
+                "secondExchange": undefined,
+                "amountIn": undefined,
+                "profit": 0
+            })
         })
     }
 
@@ -92,8 +93,8 @@ module.exports = class BasicFactory {
             for (const exchange of this.exchanges) {
                 // @formatter:off
                 tableSelects.push(`
-                    select *, 
-                       case when token0>token1 then 
+                    select address, token0, token1, 
+                       case when token0 > token1 then 
                            token0 || token1
                        else 
                            token1 || token0 
@@ -103,8 +104,8 @@ module.exports = class BasicFactory {
                 // @formatter:on
             }
             // @formatter:off
-            return resolve(await this.database.customGetCommand(`
-                select address, token0, token1, count(*) as count from (
+            const selectCommand = `
+                select token0, token1, count(*) as count from (
                      ${tableSelects.join(" union ")}
                 )
                 group by combined
@@ -112,7 +113,8 @@ module.exports = class BasicFactory {
                 order by count desc
                 limit ${limit}
                 offset ${offset}
-            `))
+            `
+            return resolve(await this.database.customGetCommand(selectCommand))
             // @formatter:on
         })
     }

@@ -2,9 +2,11 @@ module.exports = class Exchange {
     constructor(web3) {
         if (new.target === Exchange)
             throw new Error("Class is abstract.")
+
+        this.WETH = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
     }
 
-    async getSwapFee(pairContract){
+    async getSwapFee(pairContract) {
         throw new Error("You need to overwrite this function.")
     }
 
@@ -39,7 +41,7 @@ module.exports = class Exchange {
         })
     }
 
-    async getTotalPairs(){
+    async getTotalPairs() {
         return new Promise(async resolve => {
             const allPairsLength = await this.factoryContract.methods.allPairsLength.call().call()
             return resolve(allPairsLength)
@@ -65,6 +67,20 @@ module.exports = class Exchange {
             } catch (e) {
                 return reject(e.toString())
             }
+        })
+    }
+
+    async swapToETH(amountIn, token0) {
+        return new Promise(async resolve => {
+            if (token0 !== this.WETH) {
+                try {
+                    const amountsOut = await this.routerContract.methods.getAmountsOut(amountIn.toString(), [token0, this.WETH]).call()
+                    return resolve(amountsOut[1])
+                } catch {
+                    return resolve(0)
+                }
+            }
+            return resolve(amountIn)
         })
     }
 }
