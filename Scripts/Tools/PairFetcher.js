@@ -2,9 +2,10 @@ module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 60000
-        this.parallelFetchLimit = 200
+        this.interval = 3000
+        this.parallelFetchLimit = 400
         this.showStatus = true
+        this.parallelInsertLimit = 300
 
         this.exchanges = []
         for (let i = 1; i < arguments.length; i++) {
@@ -44,10 +45,9 @@ module.exports = class PairFetcher {
         const totalPairs = await exchange.getTotalPairs()
 
         if (totalPairs > allKnownPairs) {
-            for (let i = 0; i < totalPairs - allKnownPairs; i++)
+            const number = totalPairs - allKnownPairs <= this.parallelInsertLimit ? totalPairs - allKnownPairs : this.parallelInsertLimit
+            for (let i = 0; i < number; i++)
                 this.database.saveData(exchange.tableName)
-
-            console.log(`Creating ${totalPairs - allKnownPairs} value(s) in table ${exchange.tableName}`)
         }
         await this.fetchPairs(exchange)
     }
