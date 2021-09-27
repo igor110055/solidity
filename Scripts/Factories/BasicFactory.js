@@ -23,9 +23,15 @@ module.exports = class BasicFactory {
                         (token0 = "${token1}" and token1 = "${token0}")
                 `)
 
-                if (pairs.length > 0) {
+                if (pairs.length > -1) {
                     let pair = pairs[0]
-                    const [reserve0, reserve1, swapFee] = await exchange.getReserves(pair["token0"], pair["token1"])
+                    pair = {
+                        number: 1,
+                        address: "something",
+                        token0: token0,
+                        token1: token1
+                    }
+                    const [reserve0, reserve1, swapFee] = await exchange.getReserves(token0, token1)
 
                     pair["reserve0"] = reserve0
                     pair["reserve1"] = reserve1
@@ -46,7 +52,7 @@ module.exports = class BasicFactory {
                                 allPairs[exchangeA]["reserve0"],
                                 allPairs[exchangeA]["reserve1"],
                                 allPairs[exchangeA]["swapFee"],
-                                allPairs[exchangeB]["reserve0"] * 1.1,
+                                allPairs[exchangeB]["reserve0"],
                                 allPairs[exchangeB]["reserve1"],
                                 allPairs[exchangeB]["swapFee"]
                             ]
@@ -54,7 +60,7 @@ module.exports = class BasicFactory {
                             const extrema = this.calculator.calculateSimpleExtrema(...params)
                             if (extrema > 0) {
                                 const profit = this.calculator.calculateProfit(extrema, ...params)
-                                console.log(profit / 1E18)
+
                                 if (profit > maxProfit) {
                                     maxProfit = profit
                                     firstExchange = allExchanges[exchangeA]
