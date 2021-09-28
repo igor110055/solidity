@@ -60,6 +60,7 @@ module.exports = class Exchange {
                 const token1 = await pairContract.methods.token1.call().call()
 
                 return resolve({
+                    "number": number,
                     "address": pairAddress,
                     "token0": token0,
                     "token1": token1

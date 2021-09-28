@@ -1,113 +1,155 @@
 module.exports = class Database {
     constructor() {
-        this.fs = require("fs")
-        this.config = JSON.parse(this.fs.readFileSync(__dirname + "/config.json").toString())
-        this.saveConfig = () => this.fs.writeFileSync(__dirname + "/config.json", JSON.stringify(this.config, null, 3))
+        this.tables = require(__dirname + "/tables.json")
+        this.mysql = require('mysql-await');
+        this.loginData = require(__dirname + "/config.json")
 
-        this.sqlite3 = require("sqlite3")
+        this.databaseName = this.loginData["database"]
     }
 
     async setup() {
-        const tableNames = Object.keys(this.config["tables"])
+        this.con = this.mysql.createConnection(this.loginData);
+        await this.con.connect()
+
+        const tableNames = Object.keys(this.tables)
         if (tableNames.length === 0) {
-            throw new Error("Specify table in config.json first.")
+            throw new Error("Specify table in tables.json first.")
         } else {
-            this.databases = []
-            const tableNames = Object.keys(this.config["tables"])
+            await this._setupTables(tableNames)
+        }
+    }
 
-            for (let i = 0; i < tableNames.length; i++) {
-                const databasePath = `${__dirname}${this.config["databaseDirectory"]}${tableNames[i]}.db`
-                const tempDatabase = new this.sqlite3.Database(databasePath)
-                this._setupTable(tempDatabase, tableNames[i])
-                this.databases.push(tempDatabase)
+    async _setupTables(tableNames) {
+        // @formatter:off
+        const results = await this.con.awaitQuery(
+            `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
+        )
+        // @formatter:on
 
-                if (i === 0) {
-                    this.db = tempDatabase
-                } else {
-                    await this.customCommand(`attach database '${databasePath}' as ${tableNames[i]}`)
-                }
+        const existingTables = results.map(t => t["table_name"])
+        for (const table of tableNames) {
+            if (!existingTables.includes(table)) {
+                let columns = []
+                for (const column in this.tables[table])
+                    columns.push(`${column} ${this.tables[table][column]}`)
+
+                // @formatter:off
+                await this.con.awaitQuery(`create table ${table} (${columns.join(", ")})`)
+                // @formatter:on
             }
         }
     }
 
-    _setupTable(database, tableName) {
-        // @formatter:off
-        database.all("SELECT name FROM sqlite_master WHERE type='table'", (error, result) => {
-        // @formatter:on
-            const existingTables = result.map(t => t["name"])
-
-            if (!existingTables.includes(tableName)) {
-                let columns = []
-                for (const column in this.config["tables"][tableName])
-                    columns.push(`${column} ${this.config["tables"][tableName][column]}`)
+    async insert(tableName, jsonData = "") {
+        return new Promise(async resolve => {
+            let insertCommand
+            if (jsonData !== "") {
+                let values = []
+                for (const columnValue in jsonData)
+                    values.push(`"${jsonData[columnValue]}"`)
                 // @formatter:off
-                database.run(`create table ${tableName} (${columns.join(", ")})`)
+                insertCommand = `insert into ${tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
+                // @formatter:on
+            } else {
+                // @formatter:off
+                insertCommand = `insert into ${tableName} () values()`
+                // @formatter:on
+            }
+
+            return resolve(this.con.awaitQuery(insertCommand))
+        })
+    }
+
+    async insertMultiple(tableName, jsonColumns = undefined, dataJsonArray = undefined, defaultsAmount = undefined) {
+        return new Promise(async resolve => {
+            if (jsonColumns !== undefined && dataJsonArray !== undefined) {
+                let insertValues = []
+                for (const jsonData of dataJsonArray) {
+                    let values = []
+                    for (const columnValue in jsonData)
+                        values.push(`"${jsonData[columnValue]}"`)
+
+                    insertValues.push("(" + values.join(", ") + ")")
+                }
+                // @formatter:off
+                return resolve(this.con.awaitQuery(
+                    `insert into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")}`
+                ))
+                // @formatter:on
+            } else if (defaultsAmount !== undefined) {
+                let insertValues = []
+                for (let i = 0; i < defaultsAmount; i++) {
+                    // @formatter:off
+                    insertValues.push(`()`)
+                    // @formatter:on
+                }
+                return resolve(this.con.awaitQuery(
+                    `insert into ${tableName} () values${insertValues.join(", ")}`
+                ))
+            }
+        })
+    }
+
+    async select(tableName, columns = "*", condition = "") {
+        return new Promise((resolve => {
+            // @formatter:off
+            return resolve(this.con.awaitQuery(`select ${columns} from ${tableName} ${condition}`))
+        }))
+    }
+
+    async update(tableName, jsonConditions, jsonData) {
+        return new Promise(async resolve => {
+            if (jsonConditions !== undefined && jsonData !== undefined) {
+                let formattedConditions = []
+                for (const condition in jsonConditions) {
+                    formattedConditions.push(`${condition}="${jsonConditions[condition]}"`)
+                }
+
+                let formattedValues = []
+                for (const column in jsonData) {
+                    formattedValues.push(`${column}="${jsonData[column]}"`)
+                }
+
+                // @formatter:off
+                return resolve(this.con.awaitQuery(
+                    `update ${tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`
+                ))
                 // @formatter:on
             }
         })
     }
 
-    saveData(tableName, jsonData = "") {
-        let insertCommand
-        if (jsonData !== "") {
-            let values = []
-            for (const columnValue in jsonData)
-                values.push(`"${jsonData[columnValue]}"`)
-            // @formatter:off
-            insertCommand = `insert into ${tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
-            // @formatter:on
-        } else {
-            // @formatter:off
-            insertCommand = `insert into ${tableName} default values`
-            // @formatter:on
-        }
+    async updateMultiple(tableName, columnsArray, dataJsonArray, key) {
+        return new Promise(async resolve => {
+            if (columnsArray !== undefined && dataJsonArray !== undefined && key !== undefined) {
+                let insertValues = []
+                for (const jsonData of dataJsonArray) {
+                    let values = []
+                    for (const columnValue in jsonData)
+                        values.push(`"${jsonData[columnValue]}"`)
 
-        this.db.run(insertCommand)
-    }
+                    insertValues.push("(" + values.join(", ") + ")")
+                }
 
-    async getData(tableName, columns = "*", condition = "") {
-        return new Promise((resolve => {
-            // @formatter:off
-            this.db.all(`select ${columns} from ${tableName} ${condition}`, (_, result) => {
-            // @formatter:on
-                return resolve(result)
-            })
-        }))
-    }
+                let updateValues = []
+                for (const column of columnsArray) {
+                    if (column !== key)
+                        updateValues.push(`${column} = values(${column})`)
+                }
 
-    async updateData(tableName, jsonConditions, jsonData) {
-        if (jsonConditions === undefined || jsonData === undefined) {
-            throw new Error("Enter some values bro")
-        } else {
-            let formattedConditions = []
-            for (const condition in jsonConditions) {
-                formattedConditions.push(`${condition}="${jsonConditions[condition]}"`)
+                // @formatter:off
+                return resolve(this.con.awaitQuery(
+                    `insert into ${tableName} (${columnsArray.join(", ")}) values${insertValues.join(", ")}
+                    on duplicate key update ${updateValues.join(", ")}`
+                ))
+                // @formatter:on
             }
-
-            let formattedValues = []
-            for (const column in jsonData) {
-                formattedValues.push(`${column}="${jsonData[column]}"`)
-            }
-
-            // @formatter:off
-            this.db.run(`update ${tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`)
-            // @formatter:on
-        }
-    }
-
-    async customCommand(command) {
-        return new Promise(resolve => {
-            this.db.run(command, (_, result) => {
-                return resolve(result)
-            })
         })
     }
 
-    async customGetCommand(command) {
-        return new Promise((resolve => {
-            this.db.all(command, (_, result) => {
-                return resolve(result)
-            })
-        }))
+    async custom(command) {
+        return new Promise(resolve => {
+            return resolve(this.con.awaitQuery(command))
+        })
     }
 }

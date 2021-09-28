@@ -1,18 +1,18 @@
 {
   "PancakeV1Pairs": {
-    "number": "integer primary key",
+    "number": "integer primary key auto_increment",
     "address": "text",
     "token0": "text",
     "token1": "text"
   },
   "PancakeV2Pairs": {
-    "number": "integer primary key",
+    "number": "integer primary key auto_increment",
     "address": "text",
     "token0": "text",
     "token1": "text"
   },
   "BiswapPairs": {
-    "number": "integer primary key",
+    "number": "integer primary key auto_increment",
     "address": "text",
     "token0": "text",
     "token1": "text"
