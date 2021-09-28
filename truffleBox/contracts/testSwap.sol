@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 
-import "../dependencies/interfaces/IPancakeRouter02.sol";
-import "../dependencies/interfaces/IPancakeFactory.sol";
-import "../dependencies/interfaces/IPancakeCallee.sol";
-import "../dependencies/interfaces/IPancakePair.sol";
-import "../dependencies/interfaces/IERC20.sol";
-import "../dependencies/interfaces/IWETH.sol";
+import "../dependencies/interfaces/Pancake/v2/IPancakeRouter02.sol";
+import "../dependencies/interfaces/Pancake/IPancakeFactory.sol";
+import "../dependencies/interfaces/Pancake/IPancakeCallee.sol";
+import "../dependencies/interfaces/Pancake/IPancakePair.sol";
+import "../dependencies/interfaces/Pancake/IERC20.sol";
+import "../dependencies/interfaces/Pancake/IWETH.sol";
 
 pragma solidity ^0.8.0;
 
