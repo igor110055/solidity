@@ -7,3 +7,6 @@ package-lock.json
 /truffleBxox/.deps
 /fabiosBox/build
 /fabiosBox/.deps
+
+# Important ignores
+/Scripts/Database/config.json
