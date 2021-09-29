@@ -4,118 +4,121 @@ module.exports = class BasicFactory {
         this.calculator = calculator
 
         this.exchanges = []
-        for (let i = 2; i < arguments.length; i++) {
+        for (let i = 2; i < arguments.length; i++)
             this.exchanges.push(arguments[i])
+    }
+
+    async checkPairs(pairs, parallel, callbackFunction) {
+        let totalChecked = 0
+        while (totalChecked < pairs.length) {
+            let promises = []
+            const number = parallel > pairs.length - totalChecked ? pairs.length - totalChecked : parallel
+            for (let i = 0; i < number; i++)
+                promises.push(this.checkPair(
+                    pairs[totalChecked + i]["token0"],
+                    pairs[totalChecked + i]["token1"]
+                ))
+
+            totalChecked += number
+            await Promise.all(promises).then(callbackFunction)
         }
     }
 
     async checkPair(token0, token1) {
         return new Promise(async resolve => {
-            let allExchanges = []
-            let allPairs = []
+            let selectCommands = []
             for (const exchange of this.exchanges) {
-                const pairs = await this.database.getData(exchange.tableName, "*", `
-                    where 
-                        (token0 = "${token0}" and token1 = "${token1}") 
-                    or
-                        (token0 = "${token1}" and token1 = "${token0}")
-                `)
-
-                if (pairs.length > 0) {
-                    let pair = pairs[0]
-                    pair = {
-                        number: 1,
-                        address: "something",
-                        token0: token0,
-                        token1: token1
-                    }
-                    const [reserve0, reserve1, swapFee] = await exchange.getReserves(token0, token1)
-
-                    pair["reserve0"] = reserve0
-                    pair["reserve1"] = reserve1
-                    pair["swapFee"] = swapFee
-
-                    allExchanges.push(exchange)
-                    allPairs.push(pair)
-                }
+                selectCommands.push(`select "${exchange.tableName}" as exchange, exists(
+                    select 1 from ${exchange.tableName} where (
+                        token0 = "${token0}" and
+                        token1 = "${token1}"
+                    ) or (
+                        token1 = "${token0}" and
+                        token0 = "${token1}"
+                    )
+                )`)
             }
+            const results = await this.database.custom(selectCommands.join(" union "))
 
-            if (allPairs.length > 1) {
-                let maxProfit = 0
-                let firstExchange, secondExchange, amountIn
-                for (let exchangeA = 0; exchangeA < allExchanges.length; exchangeA++) {
-                    for (let exchangeB = 0; exchangeB < allExchanges.length; exchangeB++) {
-                        if (exchangeA !== exchangeB) {
-                            const params = [
-                                allPairs[exchangeA]["reserve0"],
-                                allPairs[exchangeA]["reserve1"],
-                                allPairs[exchangeA]["swapFee"],
-                                allPairs[exchangeB]["reserve0"],
-                                allPairs[exchangeB]["reserve1"],
-                                allPairs[exchangeB]["swapFee"]
-                            ]
+            if (results.length > 0) {
+                const validExchangeNames = results.map(e => e["exchange"])
+                let exchangesWithPair = []
+                let exchangeData = []
 
-                            const extrema = this.calculator.calculateSimpleExtrema(...params)
-                            if (extrema > 0) {
-                                const profit = this.calculator.calculateProfit(extrema, ...params)
+                let promises = []
+                for (const exchange of this.exchanges) {
+                    if (validExchangeNames.includes(exchange.tableName)) {
+                        promises.push(new Promise(async resolve => {
+                            const [reserve0, reserve1, swapFee] = await exchange.getReserves(token0, token1)
 
-                                if (profit > maxProfit) {
-                                    maxProfit = profit
-                                    firstExchange = allExchanges[exchangeA]
-                                    secondExchange = allExchanges[exchangeB]
-                                    amountIn = extrema
-                                }
-                            }
-                        }
+                            exchangesWithPair.push(exchange)
+                            exchangeData.push({
+                                "reserve0": reserve0,
+                                "reserve1": reserve1,
+                                "swapFee": swapFee
+                            })
+                            resolve()
+                        }))
                     }
                 }
-                if (maxProfit > 0) {
-                    return resolve({
-                        "firstExchange": firstExchange,
-                        "secondExchange": secondExchange,
-                        "amountIn": amountIn,
-                        "profit": maxProfit
-                    })
+                await Promise.all(promises)
+
+                if (exchangesWithPair.length > 1) {
+                    let prices = exchangeData.map(d => d["reserve0"] / d["reserve1"])
+
+                    const exchangeAIndex = prices.indexOf(Math.min(...prices))
+                    const exchangeBIndex = prices.indexOf(Math.max(...prices))
+
+                    const params = [
+                        exchangeData[exchangeAIndex]["reserve0"],
+                        exchangeData[exchangeAIndex]["reserve1"],
+                        exchangeData[exchangeAIndex]["swapFee"],
+                        exchangeData[exchangeBIndex]["reserve0"],
+                        exchangeData[exchangeBIndex]["reserve1"],
+                        exchangeData[exchangeBIndex]["swapFee"]
+                    ]
+
+                    const extrema = this.calculator.calculateSimpleExtrema(...params)
+                    if (extrema > 0) {
+                        const profit = this.calculator.calculateProfit(extrema, ...params)
+
+                        return resolve({
+                            "token0": token0,
+                            "token1": token1,
+                            "firstExchange": exchangesWithPair[exchangeAIndex],
+                            "secondExchange": exchangesWithPair[exchangeBIndex],
+                            "amountIn": extrema,
+                            "profit": profit
+                        })
+                    }
                 }
             }
             return resolve({
-                "firstExchange": undefined,
-                "secondExchange": undefined,
-                "amountIn": undefined,
                 "profit": 0
             })
         })
     }
 
-    async getBestTokens(limit = 100, offset = 0) {
+    async getBestTokens(limit = 1000, offset = 0) {
         return new Promise(async resolve => {
             let tableSelects = []
-            for (const exchange of this.exchanges) {
-                // @formatter:off
+            for (const exchange of this.exchanges)
                 tableSelects.push(`
-                    select address, token0, token1, 
-                       case when token0 > token1 then 
-                           token0 || token1
-                       else 
-                           token1 || token0 
-                       end as combined 
+                    select address, token0, token1, if(
+                        token0 > token1,
+                        concat(token0, token1),
+                        concat(token1, token0)
+                    ) as combined
                     from ${exchange.tableName}
                 `)
-                // @formatter:on
-            }
-            // @formatter:off
-            const selectCommand = `
+
+            return resolve(this.database.custom(`
                 select token0, token1, count(*) as count from (
                      ${tableSelects.join(" union ")}
                 )
-                group by combined
-                having count > 1
-                order by count desc
-                limit ${limit}
-                offset ${offset}
-            `
-            return resolve(await this.database.customGetCommand(selectCommand))
-            // @formatter:on
+                as a group by combined having count > 1
+                order by count desc limit ${limit} offset ${offset}
+            `))
         })
     }
 }

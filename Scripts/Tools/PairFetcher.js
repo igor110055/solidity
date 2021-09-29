@@ -2,7 +2,7 @@ module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 2500
+        this.interval = 30000
         this.parallelFetchLimit = 350
         this.parallelInsertLimit = 350
         this.showStatus = true
@@ -46,9 +46,8 @@ module.exports = class PairFetcher {
         const allKnownPairs = (await this.database.select(exchange.tableName, "count(*) as n"))[0]["n"]
         const totalPairs = await exchange.getTotalPairs()
 
-        if (this.showStatus) {
+        if (this.showStatus)
             await this.printStatus(exchange, allKnownPairs, totalPairs)
-        }
 
 
         if (totalPairs > allKnownPairs) {

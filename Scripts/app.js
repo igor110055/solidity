@@ -19,75 +19,57 @@ async function main() {
 
     const exchanges = [pancakeV1, pancakeV2, biswap]
 
-    const fetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
+    const tradeTester = new (require("./Tools/TradeTester"))(web3, ...exchanges)
 
-    // const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
+    const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
+    // const fetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
 
-    // const bnbAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
-    // const cakeAddress = "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82"
-    // basicFactory.checkPair(bnbAddress, cakeAddress).then(result => {
-    //     console.log(result["profit"] / 1E18, "BNB")
-    //     console.log(result["profit"] / 1E18 * 350, "USD")
-    // }).catch(reason => {
-    //     console.log(reason)
-    // })
+    const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
 
+    const bestPairs = await basicFactory.getBestTokens(10000)
 
-    // const totalAmount = 100000
-    // const parallel = 100
-    // const bestPairs = await basicFactory.getBestTokens(totalAmount)
-    //
-    // for (let i = 0; i < totalAmount / parallel; i++) {
-    //     let promises = []
-    //     for (let j = 0; j < parallel; j++) {
-    //         if (i * parallel + j < bestPairs.length)
-    //             promises.push(checkPair(basicFactory, exchanges, bestPairs[i * parallel + j]))
-    //         else
-    //             return
-    //     }
-    //     console.log(`(${i * parallel}/${bestPairs.length}) (${((i * parallel) / bestPairs.length * 100).toFixed(3)}%)`)
-    //     const results = await Promise.all(promises)
-    //     results.forEach(result => {
-    //         if (result !== "Not profitable") {
-    //             console.log(result)
-    //         }
-    //     })
-    // }
-}
+    console.time("took")
+    await basicFactory.checkPairs(bestPairs, 30, async results => {
+        console.timeEnd("took")
+        for (const result of results) {
+            if (result["profit"] > 0) {
+                let promises = []
+                for (const exchange of exchanges)
+                    promises.push(exchange.swapToETH(result["profit"], result["token0"]))
 
-async function checkPair(basicFactory, exchanges, pair) {
-    return new Promise(async resolve => {
-        const result = await basicFactory.checkPair(pair["token0"], pair["token1"])
+                const results = (await Promise.all(promises))
 
-        if (result["profit"] > 0) {
-            let maxProfitUSD = 0
-            let sellAt = undefined
-            for (const exchange of exchanges) {
-                const profitUSD = (await exchange.swapToETH(result["profit"], pair["token0"])) / 1E18 * 350
+                const maxProfit = Math.max(...results).toString()
 
-                if (profitUSD > maxProfitUSD) {
-                    maxProfitUSD = profitUSD
-                    sellAt = exchange
+                const sellAt = countOccurrences(results, maxProfit) === results.length ?
+                    undefined : exchanges[results.indexOf(maxProfit)]
+
+                const maxProfitUSD = maxProfit / 1E18 * 350
+
+                if (maxProfitUSD > 0.50) {
+                    console.log({
+                        "Profit USD": maxProfitUSD,
+                        "Amount in": (result["amountIn"] / 1E18).toString(),
+                        "Token0": result["token0"],
+                        "Token1": result["token1"],
+                        "Exchange0": result["firstExchange"].tableName,
+                        "Exchange1": result["secondExchange"].tableName,
+                        "SellAt": sellAt !== undefined ? sellAt.tableName : "Already BNB"
+                    })
+                    // console.log(`${maxProfitUSD}: ${result["token0"]} ${result["token1"]} ${result["firstExchange"].tableName} --> ${result["secondExchange"].tableName} (${result["amountIn"] / 1E18}) ${sellAt.tableName}`)
+                    const profit = await tradeTester.testTrade(
+                        result["token0"],
+                        result["token1"],
+                        result["amountIn"],
+                        result["firstExchange"],
+                        result["secondExchange"],
+                        result["sellAt"]
+                    )
+                    console.log(`Calculated profit: ${profit}`)
                 }
             }
-
-            if (maxProfitUSD > 0.50)
-                // return resolve({
-                //     "Profit USD": maxProfitUSD,
-                //     "Amount in": result["amountIn"] / 1E18,
-                //     "Token0": pair["token0"],
-                //     "Token1": pair["token1"],
-                //     "Exchange0": result["firstExchange"].tableName,
-                //     "Exchange1": result["secondExchange"].tableName,
-                //     "SellAt": sellAt.tableName
-                // })
-                return resolve(`${maxProfitUSD}: ${pair["token0"]} ${pair["token1"]} ${result["firstExchange"].tableName} --> ${result["secondExchange"].tableName} (${result["amountIn"] / 1E18}) ${sellAt.tableName}`)
-            else {
-                return resolve("Not profitable")
-            }
-        } else {
-            return resolve("Not profitable")
         }
+        console.time("took")
     })
 }
 

@@ -71,11 +71,11 @@ module.exports = class Exchange {
         })
     }
 
-    async swapToETH(amountIn, token0) {
+    async swapToETH(amountIn, token) {
         return new Promise(async resolve => {
-            if (token0 !== this.WETH) {
+            if (token !== this.WETH) {
                 try {
-                    const amountsOut = await this.routerContract.methods.getAmountsOut(amountIn.toString(), [token0, this.WETH]).call()
+                    const amountsOut = await this.routerContract.methods.getAmountsOut(amountIn.toString(), [token, this.WETH]).call()
                     return resolve(amountsOut[1])
                 } catch {
                     return resolve(0)

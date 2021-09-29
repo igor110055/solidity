@@ -20,11 +20,9 @@ module.exports = class Database {
     }
 
     async _setupTables(tableNames) {
-        // @formatter:off
         const results = await this.con.awaitQuery(
             `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
         )
-        // @formatter:on
 
         const existingTables = results.map(t => t["table_name"])
         for (const table of tableNames) {
@@ -33,9 +31,7 @@ module.exports = class Database {
                 for (const column in this.tables[table])
                     columns.push(`${column} ${this.tables[table][column]}`)
 
-                // @formatter:off
                 await this.con.awaitQuery(`create table ${table} (${columns.join(", ")})`)
-                // @formatter:on
             }
         }
     }
@@ -47,13 +43,9 @@ module.exports = class Database {
                 let values = []
                 for (const columnValue in jsonData)
                     values.push(`"${jsonData[columnValue]}"`)
-                // @formatter:off
                 insertCommand = `insert into ${tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
-                // @formatter:on
             } else {
-                // @formatter:off
                 insertCommand = `insert into ${tableName} () values()`
-                // @formatter:on
             }
 
             return resolve(this.con.awaitQuery(insertCommand))
@@ -71,17 +63,13 @@ module.exports = class Database {
 
                     insertValues.push("(" + values.join(", ") + ")")
                 }
-                // @formatter:off
                 return resolve(this.con.awaitQuery(
                     `insert into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")}`
                 ))
-                // @formatter:on
             } else if (defaultsAmount !== undefined) {
                 let insertValues = []
                 for (let i = 0; i < defaultsAmount; i++) {
-                    // @formatter:off
                     insertValues.push(`()`)
-                    // @formatter:on
                 }
                 return resolve(this.con.awaitQuery(
                     `insert into ${tableName} () values${insertValues.join(", ")}`
@@ -92,7 +80,6 @@ module.exports = class Database {
 
     async select(tableName, columns = "*", condition = "") {
         return new Promise((resolve => {
-            // @formatter:off
             return resolve(this.con.awaitQuery(`select ${columns} from ${tableName} ${condition}`))
         }))
     }
@@ -110,11 +97,9 @@ module.exports = class Database {
                     formattedValues.push(`${column}="${jsonData[column]}"`)
                 }
 
-                // @formatter:off
                 return resolve(this.con.awaitQuery(
                     `update ${tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`
                 ))
-                // @formatter:on
             }
         })
     }
@@ -137,12 +122,10 @@ module.exports = class Database {
                         updateValues.push(`${column} = values(${column})`)
                 }
 
-                // @formatter:off
                 return resolve(this.con.awaitQuery(
                     `insert into ${tableName} (${columnsArray.join(", ")}) values${insertValues.join(", ")}
                     on duplicate key update ${updateValues.join(", ")}`
                 ))
-                // @formatter:on
             }
         })
     }
