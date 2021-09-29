@@ -3,6 +3,7 @@ module.exports = class Database {
         this.tables = require(__dirname + "/tables.json")
         this.mysql = require('mysql-await');
         this.loginData = require(__dirname + "/config.json")
+        this.pingIntervall = 7500
 
         this.databaseName = this.loginData["database"]
     }
@@ -17,6 +18,9 @@ module.exports = class Database {
         } else {
             await this._setupTables(tableNames)
         }
+        setInterval(async () => {
+            this.custom("select * from information_schema.KEYWORDS limit 1").then()
+        }, this.pingIntervall)
     }
 
     async _setupTables(tableNames) {

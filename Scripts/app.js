@@ -21,7 +21,6 @@ async function main() {
 
     const tradeTester = new (require("./Tools/TradeTester"))(web3, ...exchanges)
 
-    const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
     // const fetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
 
     const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
@@ -33,39 +32,32 @@ async function main() {
         console.timeEnd("took")
         for (const result of results) {
             if (result["profit"] > 0) {
-                let promises = []
-                for (const exchange of exchanges)
-                    promises.push(exchange.swapToETH(result["profit"], result["token0"]))
+                let maxProfit, sellAt
+                if (result["token0"] !== exchanges[0].WETH) {
+                    let promises = []
+                    for (const exchange of exchanges)
+                        promises.push(exchange.swapToETH(result["profit"], result["token0"]))
 
-                const results = (await Promise.all(promises))
-
-                const maxProfit = Math.max(...results).toString()
-
-                const sellAt = countOccurrences(results, maxProfit) === results.length ?
-                    undefined : exchanges[results.indexOf(maxProfit)]
+                    const results = await Promise.all(promises)
+                    console.timeEnd("test")
+                    const maxProfit = Math.max(...results).toString()
+                    sellAt = exchanges[results.indexOf(maxProfit)]
+                } else {
+                    maxProfit = result["profit"]
+                }
 
                 const maxProfitUSD = maxProfit / 1E18 * 350
 
                 if (maxProfitUSD > 0.50) {
                     console.log({
-                        "Profit USD": maxProfitUSD,
-                        "Amount in": (result["amountIn"] / 1E18).toString(),
+                        "ProfitUSD": maxProfitUSD,
+                        "AmountIn": (result["amountIn"] / 1E18).toString(),
                         "Token0": result["token0"],
                         "Token1": result["token1"],
                         "Exchange0": result["firstExchange"].tableName,
                         "Exchange1": result["secondExchange"].tableName,
                         "SellAt": sellAt !== undefined ? sellAt.tableName : "Already BNB"
                     })
-                    // console.log(`${maxProfitUSD}: ${result["token0"]} ${result["token1"]} ${result["firstExchange"].tableName} --> ${result["secondExchange"].tableName} (${result["amountIn"] / 1E18}) ${sellAt.tableName}`)
-                    const profit = await tradeTester.testTrade(
-                        result["token0"],
-                        result["token1"],
-                        result["amountIn"],
-                        result["firstExchange"],
-                        result["secondExchange"],
-                        result["sellAt"]
-                    )
-                    console.log(`Calculated profit: ${profit}`)
                 }
             }
         }
