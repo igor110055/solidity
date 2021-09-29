@@ -1,25 +1,44 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import "../dependencies/interfaces/Pancake/v2/IPancakeRouter02.sol";
+import "../dependencies/interfaces/Pancake/v1/IPancakeRouter01.sol";
 import "../dependencies/interfaces/Pancake/IPancakeFactory.sol";
 import "../dependencies/interfaces/Pancake/IPancakeCallee.sol";
 import "../dependencies/interfaces/Pancake/IPancakePair.sol";
-import "../dependencies/interfaces/Pancake/IERC20.sol";
-import "../dependencies/interfaces/Pancake/IWETH.sol";
+
+import "../dependencies/interfaces/Biswap/IBiswapRouter02.sol";
+import "../dependencies/interfaces/Biswap/IBiswapFactory.sol";
+import "../dependencies/interfaces/Biswap/IBiswapERC20.sol";
+import "../dependencies/interfaces/Biswap/IBiswapPair.sol";
+
+import "../dependencies/interfaces/IERC20.sol";
+import "../dependencies/interfaces/IWETH.sol";
 
 pragma solidity ^0.8.0;
 
 contract TestSwapContract is IPancakeCallee {
-    IPancakeFactory immutable FACTORY;
-    IPancakeRouter02 immutable ROUTER;
+    IPancakeFactory immutable pancakeFactoryV2;
+    IPancakeRouter02 immutable pancakeRouterV2;
+
+    IPancakeFactory immutable pancakeFactoryV1;
+    IPancakeRouter01 immutable pancakeRouterV1;
+
+    IBiswapFactory immutable biswapFactory;
+    IBiswapRouter02 immutable biswapRouterV2;
+
     IWETH immutable WETH;
 
     constructor() {
-        address factory = 0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73;
-        address router = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
-        FACTORY = IPancakeFactory(factory);
-        ROUTER = IPancakeRouter02(router);
-        WETH = IWETH(IPancakeRouter02(router).WETH());
+        pancakeFactoryV2 = IPancakeFactory(0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73);
+        pancakeRouterV2 = IPancakeRouter02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+
+        pancakeFactoryV1 = IPancakeFactory(0xBCfCcbde45cE874adCB698cC183deBcF17952812);
+        pancakeRouterV1 = IPancakeRouter01(0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F);
+
+        biswapFactory = IBiswapFactory(0x858E3312ed3A876947EA49d572A7C42DE08af7EE);
+        biswapRouterV2 = IBiswapRouter02(0x3a6d8cA21D1CF76F653A67577FA0D27453350dD8);
+
+        WETH = IWETH(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     }
     receive() external payable {}
     event Test(address test);
@@ -37,7 +56,7 @@ contract TestSwapContract is IPancakeCallee {
     //        IPancakePair(pair).swap(amount0Out, amount1Out, address(this), null);
     //    }
 
-    function execute(address _token0, address _token1, uint _amount, string[] memory _providerPath) public payable {
+    function execute(address _token0, address _token1, uint _amount, uint exchangeA, uint exchangeB, uint sellAt) public payable {
         require(_token0 == address(WETH) || _token1 == address(WETH), "No ETH token given");
         address pair = FACTORY.getPair(_token0, _token1);
         require(pair != address(0), "Pair does not exist");
@@ -47,7 +66,6 @@ contract TestSwapContract is IPancakeCallee {
         emit Log("amount0Out", amount0Out);
         emit Log("amount1Out", amount1Out);
         bytes memory data = abi.encode(_token0, _token1, _amount, _providerPath);
-//        pancakeCall2(address(this), amount0Out, amount1Out, data);
         IPancakePair(pair).swap(amount0Out, amount1Out, address(this), data);
     }
 
@@ -66,8 +84,4 @@ contract TestSwapContract is IPancakeCallee {
         IERC20(token0).transfer(pair, amountToRepay);
         emit Log("Success", 42);
     }
-
-//    function pancakeCall(address sender, uint amount0, uint amount1, bytes calldata data) external override {
-//
-//    }
 }
