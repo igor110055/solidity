@@ -48,32 +48,41 @@ module.exports = class BasicFactory {
             }
             await Promise.all(promises)
 
-            let prices = exchangeData.map(d => d["reserve0"] / d["reserve1"])
+            if (exchangeData.length > 1) {
+                let prices = exchangeData.map(d => d["reserve0"] / d["reserve1"])
 
-            const exchangeAIndex = prices.indexOf(Math.min(...prices))
-            const exchangeBIndex = prices.indexOf(Math.max(...prices))
+                const exchangeAIndex = prices.indexOf(Math.min(...prices))
+                const exchangeBIndex = prices.indexOf(Math.max(...prices))
 
-            const params = [
-                exchangeData[exchangeAIndex]["reserve0"],
-                exchangeData[exchangeAIndex]["reserve1"],
-                exchangeData[exchangeAIndex]["swapFee"],
-                exchangeData[exchangeBIndex]["reserve0"],
-                exchangeData[exchangeBIndex]["reserve1"],
-                exchangeData[exchangeBIndex]["swapFee"]
-            ]
+                let params
+                try {
+                    params = [
+                        exchangeData[exchangeAIndex]["reserve0"],
+                        exchangeData[exchangeAIndex]["reserve1"],
+                        exchangeData[exchangeAIndex]["swapFee"],
+                        exchangeData[exchangeBIndex]["reserve0"],
+                        exchangeData[exchangeBIndex]["reserve1"],
+                        exchangeData[exchangeBIndex]["swapFee"]
+                    ]
+                } catch {
+                    console.log(exchangeData)
+                    console.log(prices)
+                    console.log(exchangeAIndex, exchangeBIndex)
+                }
 
-            const extrema = this.calculator.calculateSimpleExtrema(...params)
-            if (extrema > 0) {
-                const profit = this.calculator.calculateProfit(extrema, ...params)
+                const extrema = this.calculator.calculateSimpleExtrema(...params)
+                if (extrema > 0) {
+                    const profit = this.calculator.calculateProfit(extrema, ...params)
 
-                return resolve({
-                    "token0": pair["token0"],
-                    "token1": pair["token1"],
-                    "firstExchange": exchangesWithPair[exchangeAIndex],
-                    "secondExchange": exchangesWithPair[exchangeBIndex],
-                    "amountIn": extrema,
-                    "profit": profit
-                })
+                    return resolve({
+                        "token0": pair["token0"],
+                        "token1": pair["token1"],
+                        "firstExchange": exchangesWithPair[exchangeAIndex],
+                        "secondExchange": exchangesWithPair[exchangeBIndex],
+                        "amountIn": extrema,
+                        "profit": profit
+                    })
+                }
             }
             return resolve({
                 "profit": 0
@@ -87,20 +96,27 @@ module.exports = class BasicFactory {
             let tableSelects = []
             for (const exchange of this.exchanges)
                 tableSelects.push(`
-                    select token0, token1, "${exchange.tableName}" as ex, if(
-                        token0 > token1,
-                        concat(token0, token1),
-                        concat(token1, token0)
-                    ) as combined
+                    select token0,
+                           token1,
+                           "${exchange.tableName}" as ex,
+                           if(
+                                       token0 > token1,
+                                       concat(token0, token1),
+                                       concat(token1, token0)
+                               )                   as combined
                     from ${exchange.tableName}
                 `)
 
             return resolve(this.database.custom(`
-                select token0, token1, group_concat(ex) as exchanges from (
-                     ${tableSelects.join(" union ")}
-                )
-                as a group by combined having count(*) > 1
-                order by count(*) desc limit ${limit} offset ${offset}
+                select token0, token1, group_concat(ex) as exchanges
+                from (
+                         ${tableSelects.join(" union ")}
+                         )
+                         as a
+                group by combined
+                having count(*) > 1
+                order by count(*) desc
+                limit ${limit} offset ${offset}
             `))
         })
     }

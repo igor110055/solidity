@@ -27,27 +27,31 @@ async function main() {
 
     const bestPairs = await basicFactory.getBestTokens(10000)
 
-    console.time("took")
-    await basicFactory.checkPairs(bestPairs, 30, async results => {
-        console.timeEnd("took")
+    console.time("Fetching took")
+    await basicFactory.checkPairs(bestPairs, 100, async results => {
+        console.timeEnd("Fetching took")
+
+        let promises = []
+        for (let i = 0; i < results.length; i++) {
+            if (results[i]["profit"] > 0 && results[i]["token0"] !== exchanges[0].WETH) {
+                promises.push(new Promise(async resolve => {
+                    let tokensOut = []
+                    for (const exchange of exchanges)
+                        tokensOut.push(await exchange.swapToETH(results[i]["profit"], results[i]["token0"]))
+
+                    const maxProfit = Math.max(...tokensOut).toString()
+                    results[i]["maxProfit"] = maxProfit
+                    results[i]["sellAt"] = exchanges[tokensOut.indexOf(maxProfit)]
+                    resolve()
+                }))
+            }
+        }
+
+        await Promise.all(promises)
+
         for (const result of results) {
             if (result["profit"] > 0) {
-                let maxProfit, sellAt
-                if (result["token0"] !== exchanges[0].WETH) {
-                    let promises = []
-                    for (const exchange of exchanges)
-                        promises.push(exchange.swapToETH(result["profit"], result["token0"]))
-
-                    const results = await Promise.all(promises)
-                    console.timeEnd("test")
-                    const maxProfit = Math.max(...results).toString()
-                    sellAt = exchanges[results.indexOf(maxProfit)]
-                } else {
-                    maxProfit = result["profit"]
-                }
-
-                const maxProfitUSD = maxProfit / 1E18 * 350
-
+                const maxProfitUSD = result["maxProfit"] / 1E18 * 350
                 if (maxProfitUSD > 0.50) {
                     console.log({
                         "ProfitUSD": maxProfitUSD,
@@ -56,12 +60,12 @@ async function main() {
                         "Token1": result["token1"],
                         "Exchange0": result["firstExchange"].tableName,
                         "Exchange1": result["secondExchange"].tableName,
-                        "SellAt": sellAt !== undefined ? sellAt.tableName : "Already BNB"
+                        "SellAt": result["sellAt"] !== undefined ? result["sellAt"].tableName : "Already BNB"
                     })
                 }
             }
         }
-        console.time("took")
+        console.time("Fetching took")
     })
 }
 
