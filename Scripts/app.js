@@ -20,12 +20,32 @@ async function main() {
     const exchanges = [pancakeV1, pancakeV2, biswap]
 
     const tradeTester = new (require("./Tools/TradeTester"))(web3, ...exchanges)
+    const info = {
+        ProfitUSD: 59.642381824512725,
+        AmountIn: '6.1467769909912e-11',
+        Token0: '0x2cD1075682b0FCCaADd0Ca629e138E64015Ba11c',
+        Token1: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+        Exchange0: 'PancakeV2Pairs',
+        Exchange1: 'PancakeV1Pairs',
+        SellAt: 'Already BNB'
+    }
+
+    const result = await tradeTester.testTrade(
+        info["Token0"],
+        info["Token1"],
+        info["AmountIn"],
+        info["Exchange0"],
+        info["Exchange1"],
+        info["SellAt"]
+    )
+    console.log(result)
 
     // const fetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
 
+    /*
     const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
 
-    const bestPairs = await basicFactory.getBestTokens(10000)
+    const bestPairs = await basicFactory.getBestTokens(15000)
 
     console.time("Fetching took")
     await basicFactory.checkPairs(bestPairs, 100, async results => {
@@ -67,6 +87,8 @@ async function main() {
         }
         console.time("Fetching took")
     })
+    */
 }
+
 
 main().then()

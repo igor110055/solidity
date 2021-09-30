@@ -1,4 +1,4 @@
-const myContract = artifacts.require("TestSwapContract");
+const myContract = artifacts.require("ArbitrageFlashSwap");
 
 module.exports = function (deployer) {
     deployer.deploy(myContract);
