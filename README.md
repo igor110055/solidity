@@ -12,6 +12,10 @@
 - Connect Nodejs Script with Smart Contract
 
 ## Ganache-CLI
+### Settings
+Mnemonic
+> develop oven fiscal debris thank solar science twice similar mix giraffe erupt scorpion quiz hover
+
 ### Start Local Blockchain (using Ganache-CLI)
 > ganache-cli -f https://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/archive -m MNEMONIC-BIP39-STYLE
 

@@ -5,16 +5,25 @@ module.exports = class PairFetcher {
         this.interval = 30000
         this.parallelFetchLimit = 350
         this.parallelInsertLimit = 350
-        this.showStatus = true
+        this.showStatus = false
 
         this.exchanges = []
         for (let i = 1; i < arguments.length; i++) {
             this.exchanges.push(arguments[i])
         }
 
-        const ticker = () => this.exchanges.forEach(e => this.updateDatabase(e))
+        this.alreadyFetching = false
+        const ticker = async () => {
+            if (!this.alreadyFetching) {
+                this.alreadyFetching = true
+                const promises = []
+                this.exchanges.forEach(e => promises.push(this.updateDatabase(e)))
+                await Promise.all(promises)
+                this.alreadyFetching = false
+            }
+        }
 
-        ticker()
+        ticker().then()
         setInterval(ticker, this.interval)
     }
 

@@ -1,4 +1,4 @@
-class Calculator {
+module.exports = class Calculator {
     calculateSimpleExtrema(aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
         const a = aToken0Reserve
         const b = aToken1Reserve
@@ -21,6 +21,15 @@ class Calculator {
         const output = ((numerator / denominator) - amountIn).toString()
         return output.split(".")[0]
     }
-}
 
-module.exports = Calculator
+    calculateSimpleExtremaWithFee(aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
+        const a = aToken0Reserve
+        const b = aToken1Reserve
+        const c = aFee
+        const d = bToken0Reserve
+        const e = bToken1Reserve
+        const f = bFee
+        const extrema = (-100000000 * a * e + 9984.988733093 * Math.sqrt(a * b * c * d * e * f - 10000 * a * b * c * d * e - 10000 * a * b * d * e * f + 100000000 * a * b * d * e)) / (b * c * f - 10000 * b * c - 10000 * b * f + 100000000 * b - 10000 * c * e + 100000000 * e)
+        return extrema.toString().split(".")[0]
+    }
+}

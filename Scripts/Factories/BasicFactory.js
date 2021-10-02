@@ -1,24 +1,17 @@
-module.exports = class BasicFactory {
+const Factory = require("./Factory")
+const {getMax, getMin} = require("../Tools/Helpers");
+
+module.exports = class BasicFactory extends Factory {
     constructor(database, calculator) {
+        super();
         this.database = database
         this.calculator = calculator
 
         this.exchanges = []
         for (let i = 2; i < arguments.length; i++)
             this.exchanges.push(arguments[i])
-    }
 
-    async checkPairs(pairs, parallel, callbackFunction) {
-        let totalChecked = 0
-        while (totalChecked < pairs.length) {
-            let promises = []
-            const number = parallel > pairs.length - totalChecked ? pairs.length - totalChecked : parallel
-            for (let i = 0; i < number; i++)
-                promises.push(this.checkPair(pairs[totalChecked + i]))
-
-            totalChecked += number
-            await Promise.all(promises).then(callbackFunction)
-        }
+        this.minProfitUSD = 0
     }
 
     async checkPair(pair) {
@@ -54,34 +47,42 @@ module.exports = class BasicFactory {
                 const exchangeAIndex = prices.indexOf(Math.min(...prices))
                 const exchangeBIndex = prices.indexOf(Math.max(...prices))
 
-                let params
-                try {
-                    params = [
-                        exchangeData[exchangeAIndex]["reserve0"],
-                        exchangeData[exchangeAIndex]["reserve1"],
-                        exchangeData[exchangeAIndex]["swapFee"],
-                        exchangeData[exchangeBIndex]["reserve0"],
-                        exchangeData[exchangeBIndex]["reserve1"],
-                        exchangeData[exchangeBIndex]["swapFee"]
-                    ]
-                } catch {
-                    console.log(exchangeData)
-                    console.log(prices)
-                    console.log(exchangeAIndex, exchangeBIndex)
+                let params = [
+                    exchangeData[exchangeAIndex]["reserve0"],
+                    exchangeData[exchangeAIndex]["reserve1"],
+                    exchangeData[exchangeAIndex]["swapFee"],
+                    exchangeData[exchangeBIndex]["reserve0"],
+                    exchangeData[exchangeBIndex]["reserve1"],
+                    exchangeData[exchangeBIndex]["swapFee"]
+                ]
+
+                if(pair["token0"] === "0x0E52d24c87A5ca4F37E3eE5E16EF5913fb0cCEEB" || pair["token1"] === "0x0E52d24c87A5ca4F37E3eE5E16EF5913fb0cCEEB"){
+                    console.log("yeet")
                 }
-
-                const extrema = this.calculator.calculateSimpleExtrema(...params)
+                let extrema = this.calculator.calculateSimpleExtrema(...params)
                 if (extrema > 0) {
-                    const profit = this.calculator.calculateProfit(extrema, ...params)
+                    let profitData = await this.getProfitData(extrema, params, pair["token0"])
 
-                    return resolve({
-                        "token0": pair["token0"],
-                        "token1": pair["token1"],
-                        "firstExchange": exchangesWithPair[exchangeAIndex],
-                        "secondExchange": exchangesWithPair[exchangeBIndex],
-                        "amountIn": extrema,
-                        "profit": profit
-                    })
+                    if (profitData["profitETH"] / 1E18 * 350 > this.minProfitUSD) {
+                        const borrowPairData = await this.getBorrowPair(pair["token0"], pair["token1"], extrema)
+                        extrema = borrowPairData["reserve"] < extrema ? borrowPairData["reserve"] : extrema
+                        profitData = await this.getProfitData(extrema, params, pair["token0"])
+
+                        if (profitData["profitETH"] / 1E18 * 350 > this.minProfitUSD) {
+                            return resolve({
+                                "token0": pair["token0"],
+                                "token1": pair["token1"],
+                                "amountIn": extrema,
+                                "borrowPair": borrowPairData["pair"],
+                                "exchangeA": exchangesWithPair[exchangeAIndex],
+                                "exchangeB": exchangesWithPair[exchangeBIndex],
+                                "exchangeC": profitData["exchangeC"],
+                                "profitETH": profitData["profitETH"]
+                            })
+                        } else {
+                            console.log(profitData["profitETH"] / 1E18 * 350)
+                        }
+                    }
                 }
             }
             return resolve({
@@ -90,8 +91,7 @@ module.exports = class BasicFactory {
         })
     }
 
-    async getBestTokens(limit = 1000, offset = 0) {
-        limit = Math.min(limit, 9000)
+    async getBestTokens(limit = 1E6, offset = 0) {
         return new Promise(async resolve => {
             let tableSelects = []
             for (const exchange of this.exchanges)
@@ -100,24 +100,51 @@ module.exports = class BasicFactory {
                            token1,
                            "${exchange.tableName}" as ex,
                            if(
-                                       token0 > token1,
-                                       concat(token0, token1),
-                                       concat(token1, token0)
-                               )                   as combined
+                               token0 > token1,
+                               concat(token0, token1),
+                               concat(token1, token0)
+                           ) as combined
                     from ${exchange.tableName}
                 `)
 
             return resolve(this.database.custom(`
                 select token0, token1, group_concat(ex) as exchanges
                 from (
-                         ${tableSelects.join(" union ")}
-                         )
-                         as a
+                    ${tableSelects.join(" union ")}
+                )
+                as a
                 group by combined
                 having count(*) > 1
                 order by count(*) desc
                 limit ${limit} offset ${offset}
             `))
         })
+    }
+
+    async getProfitData(extrema, params, token0) {
+        let profit = this.calculator.calculateProfit(extrema, ...params)
+        let profitAfterFee = Math.floor(profit - (extrema + (((extrema * 3) / 997) + 1)))
+
+        if (profitAfterFee > 0) {
+            let maxProfitETH
+            if (token0 !== this.exchanges[0].WETH) {
+                let tokensOut = []
+                for (const exchange of this.exchanges)
+                    tokensOut.push(await exchange.swapToETH(profitAfterFee, token0))
+
+                maxProfitETH = getMax(tokensOut)
+                return {
+                    profitETH: maxProfitETH,
+                    exchangeC: this.exchanges[tokensOut.indexOf(maxProfitETH)]
+                }
+            } else {
+                return {
+                    profitETH: profitAfterFee
+                }
+            }
+        }
+        return {
+            profitETH: 0
+        }
     }
 }

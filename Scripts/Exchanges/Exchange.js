@@ -29,6 +29,21 @@ module.exports = class Exchange {
         })
     }
 
+    async getReserveForToken(pairAddress, token) {
+        return new Promise(async resolve => {
+            try {
+                const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
+                const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
+
+                const token0InPair = await pairContract.methods.token0.call().call()
+
+                return resolve(token0InPair === token ? _reserve0 : _reserve1)
+            } catch {
+                return resolve(0)
+            }
+        })
+    }
+
     async getAmountOut(amountIn, reserve0, reserve1, fee) {
         return new Promise(async (resolve, reject) => {
             if (amountIn <= 0 || reserve0 <= 0 || reserve1 <= 0)
