@@ -1,0 +1,9 @@
+{
+    "telemetry.enableCrashReporter": false,
+    "files.autoSave": "onFocusChange",
+    "files.eol": "\n",
+    "debug.allowBreakpointsEverywhere": true,
+    "npm.packageManager": "npm",
+    "npm-intellisense.importLinebreak": "",
+    "vsintellicode.features.python.deepLearning": "enabled"
+}
