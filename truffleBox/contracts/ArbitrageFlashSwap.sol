@@ -1,107 +1,107 @@
 // SPDX-License-Identifier: UNLICENSED
 
-import "../dependencies/interfaces/Pancake/IPancakeRouter01.sol";
 import "../dependencies/interfaces/Pancake/IPancakeRouter02.sol";
-import "../dependencies/interfaces/Pancake/IPancakeFactory.sol";
-import "../dependencies/interfaces/Pancake/IPancakeCallee.sol";
 import "../dependencies/interfaces/Pancake/IPancakePair.sol";
 
 import "../dependencies/interfaces/IERC20.sol";
 import "../dependencies/interfaces/IWETH.sol";
 
-pragma solidity ^0.8.0;
+pragma solidity >= 0.6.6 < 0.8.0;
+
+// e1 = Wrong borrowPair (fn_execute)
+// e2 = Function caller is not a Pair (fn_swapCall)
+// e3 = Arbitrage-Operation wasn't profitable (fn_swapCall)
+// e4 = Could not transfer WETH to Pair (fn_swapCall)
+// e5 = Could not transfer WETH to Owner (fn_swapCall)
 
 contract ArbitrageFlashSwap {
-    address WETH = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
+    address private owner;
+    IWETH immutable WETH;
+
+    constructor(){
+        owner = msg.sender;
+        WETH = IWETH(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+    }
 
     receive() external payable {}
 
-    event LogFlashSwap(address token0, address token1, address exchangeA, address exchangeB, uint profit);
-    event LogAddress(string message, address test);
-    event LogNumber(string message, uint value);
+    event LogFlashSwap(address token0, address token1, address routerA, address routerB, address routerC, uint profit);
 
     function execute(
         address _token0, address _token1, uint _amountIn,
-        address _borrowPair, address _factoryA, address _factoryB, address _routerSell
+        address _borrowPair, address _routerA, address _routerB, address _routerC
     ) public payable {
-        uint amount0Out = _token0 == IPancakePair(_borrowPair).token0() ? _amountIn : 0;
-        uint amount1Out = _token0 == IPancakePair(_borrowPair).token1() ? _amountIn : 0;
+        if (msg.sender == owner) {
+            // Check if the pair contains token0
+            IPancakePair pair = IPancakePair(_borrowPair);
+            require(pair.token0() == _token0 || pair.token1() == _token0, "e1");
 
-        emit LogNumber("amount0Out", amount0Out);
-        emit LogNumber("amount1Out", amount1Out);
-
-        IPancakePair(_borrowPair).swap(
-            amount0Out, amount1Out, address(this),
-            abi.encode(_token0, _token1, _amountIn, _factoryA, _factoryB, _routerSell)
-        );
+            // Trigger flash swap and pass variables
+            pair.swap(
+                _token0 == pair.token0() ? _amountIn : 0,
+                _token0 == pair.token1() ? _amountIn : 0,
+                address(this),
+                abi.encode(_token0, _token1, _amountIn, _routerA, _routerB, _routerC)
+            );
+        }
     }
 
-//    function swapCall(address _sender, uint _amount0, uint _amount1, bytes calldata _data) private {
-    function swapCall(address token0, address token1, uint amountIn, address routerA, address routerB) public {
-//        (address token0, address token1, uint amountIn, address factoryA, address factoryB, address routerSell) = abi.decode(_data, (address, address, uint, address, address, address));
-        // require(pair == msg.sender, "Function sender is not a pair"); UNCOMMENT AFTERWARDS
+    function swapCall(bytes calldata _data) private {
+        // Function caller has to be a Pair and not some person
+        require(address(IPancakePair(msg.sender)) == msg.sender, "e2");
 
-//        emit LogAddress("_sender", _sender);
-//        emit LogNumber("_amount0", _amount0);
-//        emit LogNumber("_amount1", _amount1);
+        // Extract variables from _data
+        (address token0, address token1, uint amountIn, address routerA, address routerB, address routerC) = abi.decode(_data, (address, address, uint, address, address, address));
 
-        emit LogAddress("token0", token0);
-        emit LogAddress("token1", token1);
-        emit LogNumber("amountIn", amountIn);
-        emit LogAddress("routerA", routerA);
-        emit LogAddress("routerB", routerB);
-//        emit LogAddress("routerSell", routerSell);
+        // Create path arrays for the 2 swaps
+        address[] memory path0 = new address[](2);
+        address[] memory path1 = new address[](2);
+        path0[0] = path1[1] = token0;
+        path0[1] = path1[0] = token1;
 
-        uint amountOut0;
-        uint amountOut1;
+        // First swap (token0 --> token1)
+        IERC20(token0).approve(routerA, amountIn);
+        uint amountOut0 = IPancakeRouter02(routerA).swapExactTokensForTokens(amountIn, 0, path0, address(this), block.timestamp + 30)[1];
 
-        address[] memory path = new address[](2);
-        path[0] = token0;
-        path[1] = token1;
+        // Second swap (token1 --> token)
+        IERC20(token1).approve(routerB, amountOut0);
+        uint amountOut1 = IPancakeRouter02(routerB).swapExactTokensForTokens(amountOut0, 0, path1, address(this), block.timestamp + 30)[1];
 
-        IPancakeRouter02(routerB).swapExactETHForTokens{value : amountIn}(0, path, address(this), block.timestamp + 60);
-        emit LogNumber("amountOut0", amountOut0);
-        //        if (token0 == WETH)
-//            amountOut0 = IPancakeRouter02(routerA).swapExactETHForTokens{value : amountIn}(0, path, address(this), block.timestamp + 60)[1];
-//        else
-//            if (token1 == WETH)
-//                amountOut0 = IPancakeRouter02(routerA).swapExactTokensForETH(amountIn, 0, path, address(this), block.timestamp + 60)[1];
-//            else
-//                amountOut0 = IPancakeRouter02(routerA).swapExactTokensForTokens(amountIn, 0, path, address(this), block.timestamp + 60)[1];
+        uint amountToRepay = amountIn + (((amountIn * 3) / 997) + 1);
+        require(amountToRepay < amountOut1, "e3");
+        uint profit = amountOut1 - amountToRepay;
 
-        path[0] = token1;
-        path[1] = token0;
-//
-//        if (token1 == WETH)
-//            amountOut1 = IPancakeRouter02(factoryB).swapExactETHForTokens{value : amountOut0}(0, path, address(this), block.timestamp + 60)[1];
-//        else
-//            if (token0 == WETH)
-//                amountOut1 = IPancakeRouter02(factoryB).swapExactTokensForETH(amountIn, 0, path, address(this), block.timestamp + 60)[1];
-//            else
-//                amountOut1 = IPancakeRouter02(factoryB).swapExactTokensForTokens(amountIn, 0, path, address(this), block.timestamp + 60)[1];
-//
-//        emit LogNumber("amountOut0", amountOut0);
-//        emit LogNumber("amountOut1", amountOut1);
-//
-//        uint fee = ((amountIn * 3) / 997) + 1;
-//        uint amountToRepay = amountIn + fee;
-//
-//        require(amountToRepay < amountOut1, "Did not make profit!");
-//
-//        if (token0 == WETH) {
-//            IWETH(WETH).deposit{value : amountToRepay}();
-//            IWETH(WETH).transfer(msg.sender, amountToRepay);
-//        } else {
-//            IERC20(token0).transfer(msg.sender, amountToRepay);
-//        }
-        emit LogNumber("Success", 42);
+        // Optimistically set profitWETH to profit (don't know if token0 is WETH)
+        uint profitWETH = profit;
+        if (token0 != address(WETH)) {
+            // Repay loan in token0
+            IERC20(token0).transfer(msg.sender, amountToRepay);
+
+            // Swap token0 to WETH
+            IERC20(token0).approve(routerC, profit);
+            path0[1] = address(WETH);
+
+            // Set profit to WETH value
+            profitWETH = IPancakeRouter02(routerC).swapExactTokensForETH(profit, 0, path0, owner, block.timestamp + 30)[1];
+        } else {
+            // Repay loan in WETH
+            WETH.deposit{value: amountToRepay}();
+            require(WETH.transfer(msg.sender, amountToRepay), "e4");
+        }
+
+        // Transfer profit in WETH to contract's owner
+        (bool success,) = owner.call{value: profitWETH}(new bytes(0));
+        require(success, "e5");
+
+        // Emit an Event for tracking purposes
+        emit LogFlashSwap(token0, token1, routerA, routerB, routerC, profitWETH);
     }
 
     function pancakeCall(address _sender, uint _amount0, uint _amount1, bytes calldata _data) external {
-//        swapCall(_sender, _amount0, _amount1, _data);
+        swapCall(_data);
     }
 
     function BiswapCall(address _sender, uint _amount0, uint _amount1, bytes calldata _data) external {
-//        swapCall(_sender, _amount0, _amount1, _data);
+        swapCall(_data);
     }
 }
