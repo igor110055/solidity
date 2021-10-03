@@ -3,13 +3,14 @@ module.exports = class Exchange {
         if (new.target === Exchange)
             throw new Error("Class is abstract.")
 
+        this.web3 = web3
         this.WETH = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
     }
 
     async getSwapFee(pairContract) {
         throw new Error("You need to overwrite this function.")
     }
-
+    
     async getReserves(token0, token1) {
         return new Promise(async (resolve, reject) => {
             const pairAddress = await this.factoryContract.methods.getPair(token0, token1).call()
@@ -17,42 +18,29 @@ module.exports = class Exchange {
                 return reject("Not a valid pair")
 
             const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
-            const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
+            const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
             const token0InPair = await pairContract.methods.token0.call().call()
 
-            return resolve([
-                token0InPair === token0 ? _reserve0 : _reserve1,
-                token0InPair === token1 ? _reserve0 : _reserve1,
-                await this.getSwapFee(pairContract)
-            ])
+            return resolve({
+                "reserve0": token0 === token0InPair ? _reserve0 : _reserve1,
+                "reserve1": token0 === token0InPair ? _reserve1 : _reserve0,
+                "swapFee": await this.getSwapFee(pairContract)
+            })
         })
     }
 
-    async getReserveForToken(pairAddress, token) {
+    async getReservesFromPair(pairAddress, token0) {
         return new Promise(async resolve => {
-            try {
-                const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
-                const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
+            const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
+            const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
-                const token0InPair = await pairContract.methods.token0.call().call()
+            const token0InPair = await pairContract.methods.token0.call().call()
 
-                return resolve(token0InPair === token ? _reserve0 : _reserve1)
-            } catch {
-                return resolve(0)
-            }
-        })
-    }
-
-    async getAmountOut(amountIn, reserve0, reserve1, fee) {
-        return new Promise(async (resolve, reject) => {
-            if (amountIn <= 0 || reserve0 <= 0 || reserve1 <= 0)
-                return reject("At least 1 value is <= 0")
-
-            let amountInWithFee = amountIn * (10000 - fee)
-            let numerator = amountInWithFee * reserve1
-            let denominator = reserve0 * 10000 + amountInWithFee
-            return resolve(numerator / denominator)
+            return resolve({
+                "reserve0": token0 === token0InPair ? _reserve0 : _reserve1,
+                "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
+            })
         })
     }
 
@@ -63,7 +51,7 @@ module.exports = class Exchange {
         })
     }
 
-    async getPair(number) {
+    async getPairUsingNumber(number) {
         return new Promise(async (resolve, reject) => {
             try {
                 const pairAddress = await this.factoryContract.methods.allPairs(number).call()

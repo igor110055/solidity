@@ -37,7 +37,7 @@ module.exports = class PairFetcher {
 
             for (const missingPair of missingPairs) {
                 const pairNumber = missingPair["number"] - 1
-                promises.push(exchange.getPair(pairNumber))
+                promises.push(exchange.getPairUsingNumber(pairNumber))
             }
 
             Promise.all(promises).then(async results => {
