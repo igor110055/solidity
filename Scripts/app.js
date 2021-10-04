@@ -22,7 +22,7 @@ async function main() {
     // await tradeTester.setup()
 
     const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
-    const bestPairs = await basicFactory.getBestTokens(5)
+    const bestPairs = await basicFactory.getBestTokens(10, 3165)
 
     // new (require("./Tools/PairFetcher"))(database, ...exchanges)
 
