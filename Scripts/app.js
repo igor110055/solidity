@@ -21,24 +21,24 @@ async function main() {
     // const tradeTester = new (require("./Tools/TradeTester"))(database)
     // await tradeTester.setup()
 
-    const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
+    // const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
 
     // const bestPairs = await basicFactory.getBestTokens(300, 0)
-    const bestPairs = JSON.parse(require("./bestPairs.json"))
+    // const bestPairs = require("./bestPairs.json")
 
-    // new (require("./Tools/PairFetcher"))(database, ...exchanges)
+    new (require("./Tools/PairFetcher"))(database, ...exchanges)
 
-    console.time("Fetching took")
-    await basicFactory.checkPairs(bestPairs, 1, async results => {
-        console.timeEnd("Fetching took")
-        for (const result of results) {
-            if (result["profit"] > 0) {
-                console.log(result)
-                console.log("Testing trade".green)
-            }
-        }
-        console.time("Fetching took")
-    })
+    // console.time("Fetching took")
+    // await basicFactory.checkPairs(bestPairs, 1, async results => {
+    //     console.timeEnd("Fetching took")
+    //     for (const result of results) {
+    //         console.log(result)
+    //         if (result["profit"] > 0) {
+    //             console.log("Testing trade".green)
+    //         }
+    //     }
+    //     console.time("Fetching took")
+    // })
 }
 
 

@@ -72,67 +72,48 @@ module.exports = class BasicFactory {
             }
             await Promise.all(promises)
 
-            let result = await this.getBestProfit(pair, exchangeData)
-            if (result["retry"])
-                result = await this.getBestProfit(pair, exchangeData, true)
+            let [extrema0, profit0, exchangeA0, exchangeB0] = await this.getBestInput(exchangeData)
+            if (extrema0 <= 0) return resolve(0)
 
-            console.log(result)
+            let [borrowReserve0, borrowAddress0] = await this.getBorrowPair(pair["token0"], pair["token1"], extrema0)
+
+            if (borrowReserve0 > extrema0) {
+                let [amountOut0, exchangeC0] = await this.getBestETHExchange(extrema0, pair["token0"])
+                return resolve(this.formatOutput(
+                    extrema0, profit0, amountOut0, pair["token0"], pair["token1"],
+                    borrowAddress0, exchangeA0, exchangeB0, exchangeC0)
+                )
+            }
+
+            let [extrema1, profit1, exchangeA1, exchangeB1] = await this.getBestInput(exchangeData, true)
+            if (extrema1 <= 0) return resolve(0)
+
+            let [borrowReserve1, borrowAddress1] = await this.getBorrowPair(pair["token1"], pair["token0"], extrema1)
+
+            if (borrowReserve1 > extrema1) {
+                let [amountOut1, exchangeC1] = await this.getBestETHExchange(extrema0, pair["token0"])
+                return resolve(this.formatOutput(
+                    extrema1, profit1, amountOut1, pair["token1"], pair["token0"],
+                    borrowAddress1, exchangeA1, exchangeB1, exchangeC1)
+                )
+            }
 
             resolve(0)
         })
     }
 
-    async getBestProfit(pair, exchangeData, reversed = false) {
-        return new Promise(async resolve => {
-            const token0 = reversed ? pair["token1"] : pair["token0"]
-            const token1 = reversed ? pair["token0"] : pair["token1"]
-
-            let [extrema0, profit0, exchangeA0, exchangeB0] = await this.getBestInput(exchangeData, reversed)
-            if (extrema0 < 0) return resolve({"retry": true})
-
-            let [amountOut0, sellAt0] = await this.getBestETHExchange(profit0, token0)
-            if (amountOut0 / 1E18 * this.ethPrice < this.minProfitUSD) return resolve({"retry": true})
-
-            let [borrowReserve0, borrowAddress0] = await this.getBorrowPair(token0, token1, extrema0)
-
-            if (borrowReserve0 > extrema0)
-                return resolve({
-                    "retry": false,
-                    "token0": token0,
-                    "token1": token1,
-                    "borrowAddress": borrowAddress0,
-                    "amountIn": Number(extrema0),
-                    "exchangeA": exchangeA0,
-                    "exchangeB": exchangeB0,
-                    "exchangeC": sellAt0,
-                    "profit": Number(amountOut0),
-                    "profitUSD": Number(amountOut0 / 1E18 * this.ethPrice)
-                })
-
-            let [extrema1, profit1, exchangeA1, exchangeB1] = await this.getBestInput(exchangeData, reversed, borrowReserve0)
-            if (extrema1 < 0) return resolve({"retry": true})
-
-            let [amountOut1, sellAt1] = await this.getBestETHExchange(profit1, token0)
-            if (amountOut1 / 1E18 * this.ethPrice < this.minProfitUSD) return resolve({"retry": true})
-
-            let [borrowReserve1, borrowAddress1] = await this.getBorrowPair(token0, token1, extrema0)
-
-            if (borrowReserve1 > extrema1){
-                return resolve({
-                    "retry": false,
-                    "token0": token0,
-                    "token1": token1,
-                    "borrowAddress": borrowAddress1,
-                    "amountIn": Number(extrema1),
-                    "exchangeA": exchangeA1,
-                    "exchangeB": exchangeB1,
-                    "exchangeC": sellAt1,
-                    "profit": Number(amountOut1),
-                    "profitUSD": Number(amountOut1 / 1E18 * this.ethPrice)
-                })
-            }
-            return resolve({"retry": true})
-        })
+    async formatOutput(amountIn, amountOut, amountOutETH, token0, token1, borrowPair, exchangeA, exchangeB, exchangeC){
+        return {
+            "amountIn": amountIn,
+            "amountOut": amountOut,
+            "amountOutETH": amountOutETH,
+            "token0": token0,
+            "token1": token1,
+            "borrowPair": borrowPair,
+            "exchangeA": exchangeA,
+            "exchangeB": exchangeB,
+            "exchangeC": exchangeC,
+        }
     }
 
     async getBorrowPair(token0, token1, amountNeeded) {
@@ -152,6 +133,7 @@ module.exports = class BasicFactory {
                 const results = await Promise.all(promises)
                 const reserves = results.map(r => r["reserve"])
                 const maxReserve = getMax(reserves)
+                console.log(maxReserve, amountNeeded, maxReserve > amountNeeded)
                 if (maxReserve > amountNeeded)
                     return resolve([maxReserve, results[reserves.indexOf(maxReserve)]["address"]])
             }
@@ -199,20 +181,19 @@ module.exports = class BasicFactory {
         })
     }
 
-    async getBestInput(exchangeData, reversed, maxExtrema = undefined) {
+    async getBestInput(exchangeData, reversed = false, maxExtrema = undefined) {
         let bestInput = 0, profit = 0, exchangeA = undefined, exchangeB = undefined
         for (let i = 0; i < exchangeData.length; i++) {
             for (let j = i + 1; j < exchangeData.length; j++) {
-                const exchangeAIndex = reversed ? j : i
-                const exchangeBIndex = reversed ? i : j
                 const params = [
-                    exchangeData[exchangeAIndex]["reserve0"],
-                    exchangeData[exchangeAIndex]["reserve1"],
-                    exchangeData[exchangeAIndex]["swapFee"],
-                    exchangeData[exchangeBIndex]["reserve0"],
-                    exchangeData[exchangeBIndex]["reserve1"],
-                    exchangeData[exchangeBIndex]["swapFee"],
+                    exchangeData[i]["reserve" + (reversed ? "1" : "0")],
+                    exchangeData[i]["reserve" + (reversed ? "0" : "1")],
+                    exchangeData[i]["swapFee"],
+                    exchangeData[j]["reserve" + (reversed ? "1" : "0")],
+                    exchangeData[j]["reserve" + (reversed ? "0" : "1")],
+                    exchangeData[j]["swapFee"],
                 ]
+
                 const tempExtrema = this.calculator.calculateSimpleExtrema(...params)
                 if (tempExtrema > 0) {
                     const extrema = maxExtrema === undefined ? tempExtrema : getMin([tempExtrema, maxExtrema])
@@ -220,8 +201,8 @@ module.exports = class BasicFactory {
                     if (tempProfit > profit) {
                         bestInput = extrema
                         profit = tempProfit
-                        exchangeA = exchangeData[exchangeAIndex]["exchange"]
-                        exchangeB = exchangeData[exchangeBIndex]["exchange"]
+                        exchangeA = exchangeData[i]["exchange"]
+                        exchangeB = exchangeData[j]["exchange"]
                     }
                 }
             }
