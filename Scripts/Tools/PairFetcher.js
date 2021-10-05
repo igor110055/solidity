@@ -2,9 +2,9 @@ module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 30000
-        this.parallelFetchLimit = 350
-        this.parallelInsertLimit = 350
+        this.interval = 60000
+        this.parallelFetchLimit = 200
+        this.parallelInsertLimit = 200
         this.showStatus = false
 
         this.exchanges = []
