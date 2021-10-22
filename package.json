@@ -1,18 +1,17 @@
 {
   "name": "solidity",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "abi-decoder": "^2.4.0",
-    "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "mysql-await": "^2.1.8",
-    "sqlite3": "^5.0.2",
     "truffle": "^5.4.10",
-    "web3": "^1.5.3"
+    "tunnel-ssh": "^4.1.6",
+    "web3": "^1.5.3",
+    "web3-providers-ws": "^1.6.0"
   }
 }

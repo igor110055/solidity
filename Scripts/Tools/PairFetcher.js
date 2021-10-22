@@ -1,24 +1,30 @@
+const {doAsync} = require("../Tools/Helpers")
+
 module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 60000
-        this.parallelFetchLimit = 200
-        this.parallelInsertLimit = 200
+        this.interval = 5000
+        this.parallelFetchLimit = 250
+        this.parallelInsertLimit = this.parallelFetchLimit
         this.showStatus = false
 
         this.exchanges = []
+        this.exchangeData = {}
         for (let i = 1; i < arguments.length; i++) {
             this.exchanges.push(arguments[i])
+            this.exchangeData[arguments[i].tableName] = {}
         }
 
         this.alreadyFetching = false
         const ticker = async () => {
             if (!this.alreadyFetching) {
                 this.alreadyFetching = true
-                const promises = []
-                this.exchanges.forEach(e => promises.push(this.updateDatabase(e)))
-                await Promise.all(promises)
+                await doAsync(this.exchanges, e => this.updateDatabase(e))
+
+                if (this.showStatus)
+                    await this.printStatus()
+
                 this.alreadyFetching = false
             }
         }
@@ -33,21 +39,21 @@ module.exports = class PairFetcher {
         )
 
         if (missingPairs.length > 0) {
-            let promises = []
+            const results = await doAsync(missingPairs, p => exchange.getPairUsingNumber(p["number"] - 1))
 
-            for (const missingPair of missingPairs) {
-                const pairNumber = missingPair["number"] - 1
-                promises.push(exchange.getPairUsingNumber(pairNumber))
+            const allTokens = new Set(results.map(r => r["token0"]).concat(results.map(r => r["token1"])))
+
+            const commands = Array(...allTokens).map(t => `
+                select '${t}' from dual where not exists (select * from Tokens where tokenAddress='${t}')
+            `)
+            await this.database.custom("insert into Tokens (tokenAddress) " + commands.join(" union "))
+
+            for (let i = 0; i < results.length; i++) {
+                results[i]["number"] += 1
+                results[i]["token0"] = `(select tokenID from Tokens where tokenAddress = '${results[i]["token0"]}' limit 1)`
+                results[i]["token1"] = `(select tokenID from Tokens where tokenAddress = '${results[i]["token1"]}' limit 1)`
             }
-
-            Promise.all(promises).then(async results => {
-                for (let i = 0; i < results.length; i++)
-                    results[i]["number"] += 1
-
-                await this.database.updateMultiple(exchange.tableName, Object.keys(results[0]), results, "number")
-            }).catch(error => {
-                console.log(`Could not fetch a pair: (${exchange.tableName}) because of: ${error}`)
-            })
+            await this.database.updateMultiple(exchange.tableName, Object.keys(results[0]), results, "number")
         }
     }
 
@@ -55,21 +61,26 @@ module.exports = class PairFetcher {
         const allKnownPairs = (await this.database.select(exchange.tableName, "count(*) as n"))[0]["n"]
         const totalPairs = await exchange.getTotalPairs()
 
-        if (this.showStatus)
-            await this.printStatus(exchange, allKnownPairs, totalPairs)
-
+        this.exchangeData[exchange.tableName] = {
+            "total": totalPairs,
+            "known": allKnownPairs
+        }
 
         if (totalPairs > allKnownPairs) {
             const required = totalPairs - allKnownPairs
             const number = required <= this.parallelInsertLimit ? required : this.parallelInsertLimit
-            await this.database.insertMultiple(exchange.tableName, undefined, undefined, number)
+            await this.database.insertMultiple(exchange.tableName, undefined,undefined, number)
+            await this.fetchPairs(exchange)
         }
-        await this.fetchPairs(exchange)
     }
 
-    async printStatus(exchange, allKnownPairs, totalPairs) {
-        console.log(`${exchange.tableName}: ${allKnownPairs}/${totalPairs} ` +
-            `\x1b[31m(${(allKnownPairs / totalPairs * 100).toFixed(3)}%)\x1b[0m`
-        )
+    async printStatus() {
+        console.log()
+        for (const exchangeName of Object.keys(this.exchangeData)) {
+            const data = this.exchangeData[exchangeName]
+            console.log(`${exchangeName}: ${data["known"]}/${data["total"]} ` +
+                `\x1b[31m(${(data["known"] / data["total"] * 100).toFixed(3)}%)\x1b[0m`
+            )
+        }
     }
 }

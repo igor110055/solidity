@@ -66,7 +66,7 @@ contract("TestSwapContract", accounts => {
                 to: myContract.address
             })
 
-            await myContract.execute(
+            await myContract.execute("123",
                 busd, bnb, tokens("1"),
                 busd_cake_v2, pancakeV2Router, pancakeV1Router, pancakeV2Router
             )

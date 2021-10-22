@@ -1,24 +1,9 @@
-{
-  "Tokens": {
-    "tokenID": "int primary key auto_increment",
-    "tokenAddress": "varchar(45) unique not null"
-  },
-  "PancakeV1Pairs": {
-    "number": "integer primary key auto_increment",
-    "address": "text",
-    "token0": "int not null",
-    "token1": "int not null"
-  },
-  "PancakeV2Pairs": {
-    "number": "integer primary key auto_increment",
-    "address": "text",
-    "token0": "int not null",
-    "token1": "int not null"
-  },
-  "BiswapPairs": {
-    "number": "integer primary key auto_increment",
-    "address": "text",
-    "token0": "int not null",
-    "token1": "int not null"
+[
+  {
+    "name": "Tokens",
+    "columns": {
+      "tokenID": "int primary key auto_increment",
+      "tokenAddress": "varchar(45) not null unique"
+    }
   }
-}
+]

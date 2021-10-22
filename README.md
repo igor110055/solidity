@@ -1,14 +1,19 @@
 # Arbitrage Flash Loan Bot
 
+## Info
+Name commits using prefix [ ]
+> Use [sol] for smart-contract changes
+> 
+> Use [js] for node-js changes
+> 
+> Use [*] for other changes
+
 ## Configuration
-### Download this file
-> https://www.SendFilesSecurely.com/getfile.aspx?id=sABpcftcM35XR1mBKBAZNkZtw1LhLcllcpds
-### And save it under
-> ./Scripts/Database/
+### Database-Setup (unpacking)
+> ./Scripts/Database/config.rar
 
 ## TODO
 - Create algorithm for finding good trade pairs
-- Finish Smart Contract functions
 - Connect Nodejs Script with Smart Contract
 
 ## Ganache-CLI
@@ -17,7 +22,7 @@ Mnemonic
 > develop oven fiscal debris thank solar science twice similar mix giraffe erupt scorpion quiz hover
 
 ### Start Local Blockchain (using Ganache-CLI)
-> ganache-cli -f https://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/archive -m MNEMONIC-BIP39-STYLE
+> ganache-cli -f wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/archive/ws -m "develop oven fiscal debris thank solar science twice similar mix giraffe erupt scorpion quiz hover" -e 10000 -d true
 
 ## Truffle
 ### Compile
@@ -37,7 +42,7 @@ Gives you direct access to all deployed smart-contracts (used for testing and de
 > truffle test
 
 ## Fixes:
-### Web3 BN fix:
+### Web3 BN fix (not needed atm):
 > node_modules/number-to-bn/node_modules/bn.js/lib/bn.js
 
 Change:

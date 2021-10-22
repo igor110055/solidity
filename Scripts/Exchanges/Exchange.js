@@ -32,15 +32,23 @@ module.exports = class Exchange {
 
     async getReservesFromPair(pairAddress, token0) {
         return new Promise(async resolve => {
-            const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
-            const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
+            try{
+                const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
+                const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
-            const token0InPair = await pairContract.methods.token0.call().call()
+                const token0InPair = await pairContract.methods.token0.call().call()
 
-            return resolve({
-                "reserve0": token0 === token0InPair ? _reserve0 : _reserve1,
-                "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
-            })
+                return resolve({
+                    "reserve0": token0 === token0InPair ? _reserve0 : _reserve1,
+                    "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
+                })
+            } catch (e){
+                console.log("crashed", pairAddress, token0)
+                resolve({
+                    "reserve0": 0,
+                    "reserve1": 0
+                })
+            }
         })
     }
 

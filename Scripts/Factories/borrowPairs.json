@@ -1,0 +1,960 @@
+{
+   "1": [
+      {
+         "otherTokenID": 45,
+         "address": "0x804678fa97d91B974ec2af3c843270886528a9E6"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0"
+      }
+   ],
+   "2": [
+      {
+         "otherTokenID": 45,
+         "address": "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16"
+      },
+      {
+         "otherTokenID": 1,
+         "address": "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0"
+      },
+      {
+         "otherTokenID": 7,
+         "address": "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE"
+      }
+   ],
+   "3": [
+      {
+         "otherTokenID": 2,
+         "address": "0x28415ff2C35b65B9E5c7de82126b4015ab9d031F"
+      }
+   ],
+   "4": [
+      {
+         "otherTokenID": 207355,
+         "address": "0xc74e1fF36e5E76553952FaBeF88012A9f0EC4095"
+      }
+   ],
+   "5": [
+      {
+         "otherTokenID": 7,
+         "address": "0xFf44e10662E1CD4f7AfE399144636c74B0D05D80"
+      }
+   ],
+   "6": [
+      {
+         "otherTokenID": 45,
+         "address": "0x3Bb17b5BDbA4408AC23B1D63fB48E22D24134cd6"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0xB6e34b5C65Eda51bb1BD4ea5F79d385Fb94b9504"
+      }
+   ],
+   "7": [
+      {
+         "otherTokenID": 2,
+         "address": "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE"
+      }
+   ],
+   "8": [
+      {
+         "otherTokenID": 1,
+         "address": "0xE89161246b6F8448A5DfC2959217192026bABC7c"
+      }
+   ],
+   "9": [
+      {
+         "otherTokenID": 2,
+         "address": "0x74E4716E431f45807DCF19f284c7aA99F18a4fbc"
+      },
+      {
+         "otherTokenID": 10,
+         "address": "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D"
+      }
+   ],
+   "10": [
+      {
+         "otherTokenID": 45,
+         "address": "0xF45cd219aEF8618A92BAa7aD848364a158a24F33"
+      },
+      {
+         "otherTokenID": 9,
+         "address": "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D"
+      }
+   ],
+   "11": [
+      {
+         "otherTokenID": 1,
+         "address": "0x433964379fC71b091e7DD2b72F7230fd2bb3E937"
+      }
+   ],
+   "12": [
+      {
+         "otherTokenID": 679570,
+         "address": "0xE70684DA2B242975f4f75Dc83c227c8C74aaDFA3"
+      }
+   ],
+   "16": [
+      {
+         "otherTokenID": 2,
+         "address": "0xD9bCcbbbDFd9d67BEb5d2273102CE0762421D1e3"
+      }
+   ],
+   "22": [
+      {
+         "otherTokenID": 45,
+         "address": "0x133ee93FE93320e1182923E1a640912eDE17C90C"
+      }
+   ],
+   "24": [
+      {
+         "otherTokenID": 1,
+         "address": "0x2E41ea39F88c58CE53B993a602F63E68CC4FeB32"
+      }
+   ],
+   "26": [
+      {
+         "otherTokenID": 45,
+         "address": "0x66FDB2eCCfB58cF098eaa419e5EfDe841368e489"
+      }
+   ],
+   "27": [
+      {
+         "otherTokenID": 45,
+         "address": "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1"
+      }
+   ],
+   "28": [
+      {
+         "otherTokenID": 7,
+         "address": "0x412b607f4cBE9CaE77C6F720A701CD60fa0EBD3f"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0x71b01eBdDD797c8E9E0b003ea2f4FD207fBF46cC"
+      }
+   ],
+   "33": [
+      {
+         "otherTokenID": 45,
+         "address": "0x05faf555522Fa3F93959F86B41A3808666093210"
+      }
+   ],
+   "45": [
+      {
+         "otherTokenID": 1,
+         "address": "0x804678fa97d91B974ec2af3c843270886528a9E6"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16"
+      }
+   ],
+   "46": [
+      {
+         "otherTokenID": 1,
+         "address": "0x7E59CE69fe2adADEd3Ba874F53EEDB7cEA1Ea2F9"
+      }
+   ],
+   "48": [
+      {
+         "otherTokenID": 34,
+         "address": "0x888608EaA39F632619118875Cf9C6083AA96657b"
+      }
+   ],
+   "65": [
+      {
+         "otherTokenID": 45,
+         "address": "0xcB5aA12DfD55B7cFc29a8d7175f6309Dd7Af9a9f"
+      }
+   ],
+   "70": [
+      {
+         "otherTokenID": 479363,
+         "address": "0xa41b1090B76001E349b5D89390317B20899f74D6"
+      }
+   ],
+   "85": [
+      {
+         "otherTokenID": 95,
+         "address": "0x6f0746EC7C00e3E6ec9f3d097d28DaA685C03682"
+      },
+      {
+         "otherTokenID": 215109,
+         "address": "0x0FeBaE5eA8F57337aF26daA2BBdeD29dac340a4f"
+      }
+   ],
+   "95": [
+      {
+         "otherTokenID": 1,
+         "address": "0xf93FdC895aCA65d7b457a47894d1F95911b7215a"
+      }
+   ],
+   "100": [
+      {
+         "otherTokenID": 2,
+         "address": "0xE5dc0db6566C8ab329945C87c89a44601976cF9c"
+      }
+   ],
+   "102": [
+      {
+         "otherTokenID": 95,
+         "address": "0x53885e7ea60190e47E7B03Db8EEF8C1B047D46fe"
+      }
+   ],
+   "107": [
+      {
+         "otherTokenID": 1,
+         "address": "0xC34AacC316bA2b085179DF57df4D6F96c6E2aDB5"
+      }
+   ],
+   "108": [
+      {
+         "otherTokenID": 45,
+         "address": "0x133019599De9acAfe1625233b82aD063Ee1D077b"
+      }
+   ],
+   "109": [
+      {
+         "otherTokenID": 95,
+         "address": "0xfe2757f146017FC328bCc9b0745F0A7E57e48Ad4"
+      },
+      {
+         "otherTokenID": 45,
+         "address": "0x487AA1BC7D315485397Aed06BBB7f04E411d30Fa"
+      }
+   ],
+   "110": [
+      {
+         "otherTokenID": 649872,
+         "address": "0xa0776230f8456C4738B5D9644BAec6D0E24c9e71"
+      },
+      {
+         "otherTokenID": 149085,
+         "address": "0x3Ad87A0EC0068b55dc922E32D349E3C71833F390"
+      }
+   ],
+   "112": [
+      {
+         "otherTokenID": 164,
+         "address": "0x5616C8C42B0CCfcA3279B50E0B441E6201304845"
+      }
+   ],
+   "113": [
+      {
+         "otherTokenID": 7,
+         "address": "0xee9a41737f282062cfCF1DeacA23Ee0253AE4787"
+      }
+   ],
+   "129": [
+      {
+         "otherTokenID": 489992,
+         "address": "0x3efcbF89a18D5F934fDFd99691f2aaf4524C84f2"
+      }
+   ],
+   "134": [
+      {
+         "otherTokenID": 45,
+         "address": "0x3423426E8A646CEac4F9F13F9adA5fe7dC80bCd1"
+      }
+   ],
+   "139": [
+      {
+         "otherTokenID": 45,
+         "address": "0x0547Fb083542273915f87322d437E052f0e12bb8"
+      }
+   ],
+   "143": [
+      {
+         "otherTokenID": 95,
+         "address": "0x5f7c68e6A1E41176DBb90F87a5294965643cb18a"
+      }
+   ],
+   "148": [
+      {
+         "otherTokenID": 203,
+         "address": "0xe0Be1b7d9F2D2529aC1fe5910FFe622800eDe253"
+      }
+   ],
+   "149": [
+      {
+         "otherTokenID": 45,
+         "address": "0xB39a76DfD1B9a9310ef4Df4113503fb186de90FF"
+      }
+   ],
+   "152": [
+      {
+         "otherTokenID": 25029,
+         "address": "0xa0E1260447dFcA4E73Aa6897F213c2Bf575Dc550"
+      }
+   ],
+   "154": [
+      {
+         "otherTokenID": 117,
+         "address": "0xe285746A516759518E2a8c020BA4E80caBC87dd6"
+      }
+   ],
+   "158": [
+      {
+         "otherTokenID": 1,
+         "address": "0x460424940206Dc1FEc5b0eA314ecac23ddc102f2"
+      }
+   ],
+   "163": [
+      {
+         "otherTokenID": 45,
+         "address": "0x7752e1FA9F3a2e860856458517008558DEb989e3"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0x1099C2E6Ed6ebA95099c205b599B409305783E43"
+      }
+   ],
+   "173": [
+      {
+         "otherTokenID": 131706,
+         "address": "0x7C203C98d9557007e4f6CBce2c8367DdC9144bba"
+      }
+   ],
+   "174": [
+      {
+         "otherTokenID": 45,
+         "address": "0xE19FBC79b076A0e014B41500889C4DaB919E8dE2"
+      }
+   ],
+   "190": [
+      {
+         "otherTokenID": 550,
+         "address": "0x2FB5F76dD91cF9ff46c93fF64ab0dEf27b0Eb781"
+      }
+   ],
+   "193": [
+      {
+         "otherTokenID": 95,
+         "address": "0x8FCA10e8c3F224af0D38Cb3E2C6dcAb3de09964a"
+      }
+   ],
+   "198": [
+      {
+         "otherTokenID": 91,
+         "address": "0x1D2b1222f327a42465a0aA41beC9E32C5DaE6328"
+      }
+   ],
+   "201": [
+      {
+         "otherTokenID": 5196,
+         "address": "0x93fC52bc1189D9867520F80b8eBD51F87D317D54"
+      }
+   ],
+   "208": [
+      {
+         "otherTokenID": 2,
+         "address": "0x8FA59693458289914dB0097F5F366d771B7a7C3F"
+      },
+      {
+         "otherTokenID": 1,
+         "address": "0x6e93CD142922722E10b4217DB469107A7c45D778"
+      }
+   ],
+   "215": [
+      {
+         "otherTokenID": 1547,
+         "address": "0xa48271fF51900007D3b21Cecf30FDc8CCb63fEe6"
+      }
+   ],
+   "232": [
+      {
+         "otherTokenID": 2,
+         "address": "0xcCeab974330BE537f9BB7C4DEd20Dbd295b3DCC9"
+      }
+   ],
+   "258": [
+      {
+         "otherTokenID": 2,
+         "address": "0x942b294e59a8c47a0F7F20DF105B082710F7C305"
+      }
+   ],
+   "266": [
+      {
+         "otherTokenID": 2,
+         "address": "0x5aFEf8567414F29f0f927A0F2787b188624c10E2"
+      }
+   ],
+   "512": [
+      {
+         "otherTokenID": 7,
+         "address": "0x2b30c317ceDFb554Ec525F85E79538D59970BEb0"
+      }
+   ],
+   "526": [
+      {
+         "otherTokenID": 1,
+         "address": "0xB1C9fb07ddFc93Cc0676cBE45a377BF8ed0f7681"
+      }
+   ],
+   "533": [
+      {
+         "otherTokenID": 2,
+         "address": "0xC66017bA6C1717BB30CA8741d8F407C6a6608F09"
+      }
+   ],
+   "535": [
+      {
+         "otherTokenID": 45,
+         "address": "0x247ffA1E3B9f455719539387E52220AD4b4e0Ba8"
+      },
+      {
+         "otherTokenID": 35085,
+         "address": "0x453a688c33696c42a73230B0b3AC1e4676D32aA6"
+      }
+   ],
+   "536": [
+      {
+         "otherTokenID": 584,
+         "address": "0xF7CC25E1FD05dDEEbADC64c5E0eda96cEDC091ac"
+      }
+   ],
+   "538": [
+      {
+         "otherTokenID": 348497,
+         "address": "0x772bAa2759DeBB965c588607AaDe2b3D0f9726DD"
+      }
+   ],
+   "539": [
+      {
+         "otherTokenID": 7,
+         "address": "0xD518Be38065FB5213Edb22f4b3097196501a04cF"
+      }
+   ],
+   "558": [
+      {
+         "otherTokenID": 45,
+         "address": "0xaF293b61731478806ba25FdeAbAF2cF9B24B328d"
+      }
+   ],
+   "567": [
+      {
+         "otherTokenID": 45,
+         "address": "0x75B489803a18dD32f0DB1f9f4AcFE6d9959941dF"
+      }
+   ],
+   "569": [
+      {
+         "otherTokenID": 62827,
+         "address": "0xaEe086C872D25e59D4aDf5B493B5BfBc9E21b76F"
+      }
+   ],
+   "574": [
+      {
+         "otherTokenID": 2,
+         "address": "0x41140a1650372Fb8cb2f71e335448ab8cfc1c4f3"
+      }
+   ],
+   "576": [
+      {
+         "otherTokenID": 2,
+         "address": "0xf2CDdd345CB6f3db10003F23Ce9DdCc2D6C815f6"
+      }
+   ],
+   "597": [
+      {
+         "otherTokenID": 2,
+         "address": "0xFdFde3aF740A22648B9dD66D05698e5095940850"
+      }
+   ],
+   "600": [
+      {
+         "otherTokenID": 2,
+         "address": "0xc736cA3d9b1E90Af4230BD8F9626528B3D4e0Ee0"
+      }
+   ],
+   "606": [
+      {
+         "otherTokenID": 45,
+         "address": "0x6B8869FfB7FA764039707e36C4c1655C6bF854F0"
+      }
+   ],
+   "619": [
+      {
+         "otherTokenID": 9,
+         "address": "0xDC43A19eaf9287184c85E04A2f378abA90F414B2"
+      }
+   ],
+   "645": [
+      {
+         "otherTokenID": 45,
+         "address": "0xe1d5c90e94d73625628b2E6B7AEAbF5f1c504872"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0xE38e899cc99ddeA9737e06f0A22046d0CA904D70"
+      }
+   ],
+   "778": [
+      {
+         "otherTokenID": 45,
+         "address": "0x73e85594319A9e7E6C333c80C04a1467a888329b"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0xE4ff29825bFFe847aAD0BB2B00365ac058bbD91C"
+      }
+   ],
+   "818": [
+      {
+         "otherTokenID": 45,
+         "address": "0x3720DAD44398f745067b54ea786BB66CB97f68e9"
+      }
+   ],
+   "890": [
+      {
+         "otherTokenID": 82,
+         "address": "0x3739155Fa1B15123B7b6a382f3333C28B45A1f0B"
+      }
+   ],
+   "1030": [
+      {
+         "otherTokenID": 129,
+         "address": "0x5Bb4eF30Fca684dE7D6955022F0c64E41dBCD3ff"
+      }
+   ],
+   "1039": [
+      {
+         "otherTokenID": 45,
+         "address": "0xAc8f8370c71fE2915445EAfFe158F16F36106C60"
+      }
+   ],
+   "1070": [
+      {
+         "otherTokenID": 1939,
+         "address": "0x21d91C606A8cb4DEC15c6a2B5b06A285371f99F1"
+      }
+   ],
+   "1104": [
+      {
+         "otherTokenID": 443448,
+         "address": "0x73EA5C4002Fe87f6BD70EA2deB72228413F5EFC5"
+      }
+   ],
+   "1117": [
+      {
+         "otherTokenID": 7,
+         "address": "0x33c355eb0ed6E33e3d86323781fD927058838c75"
+      }
+   ],
+   "1130": [
+      {
+         "otherTokenID": 729160,
+         "address": "0x779466767c7BB063306eeb9bCFD4a4D638BA595B"
+      }
+   ],
+   "1132": [
+      {
+         "otherTokenID": 25787,
+         "address": "0xA74056391C25000E837d6958F487082409d96479"
+      }
+   ],
+   "1180": [
+      {
+         "otherTokenID": 2,
+         "address": "0xf4eb56A0abaeA2354542B17ECc9816E3117d69B4"
+      }
+   ],
+   "1200": [
+      {
+         "otherTokenID": 1,
+         "address": "0x3DE0747AF2faa81a97C23a2843203890F18ddBb4"
+      }
+   ],
+   "1223": [
+      {
+         "otherTokenID": 95,
+         "address": "0xCB8B0704a4776A5C7dcdDc38bedE4066bFE0Cfd5"
+      },
+      {
+         "otherTokenID": 45,
+         "address": "0xe2F35c6B6cf14282a7Ca30Ef9b6F02071C11e3FB"
+      }
+   ],
+   "1240": [
+      {
+         "otherTokenID": 99926,
+         "address": "0xd5Ae5ff8fD9e0682Ba677D5633Acd375E4575171"
+      }
+   ],
+   "1547": [
+      {
+         "otherTokenID": 2,
+         "address": "0x5C8A92320674CBc277A6a4228417d3d2C0602B27"
+      }
+   ],
+   "1830": [
+      {
+         "otherTokenID": 394909,
+         "address": "0xA7b24A45e350ca7ADE970cc0930B0e52ea5d16b4"
+      }
+   ],
+   "1864": [
+      {
+         "otherTokenID": 8025,
+         "address": "0xAFB6a5f6Eeb40637449801038485A51437d86BBa"
+      }
+   ],
+   "1911": [
+      {
+         "otherTokenID": 45,
+         "address": "0xC0507B3A35917146873363911540CA5Eca600256"
+      }
+   ],
+   "1928": [
+      {
+         "otherTokenID": 118,
+         "address": "0x786269630E7B8476f1B05d5E107f73e36d460004"
+      }
+   ],
+   "1950": [
+      {
+         "otherTokenID": 313859,
+         "address": "0x0a0219082c69aE83c566cCfea45ad29659f6f2c7"
+      }
+   ],
+   "1955": [
+      {
+         "otherTokenID": 215,
+         "address": "0xED86141179FD585dF5bCBc512261FeA813f4d48E"
+      }
+   ],
+   "1997": [
+      {
+         "otherTokenID": 95,
+         "address": "0x17741568C82EEc8491fea0cceB1082170FDAF75f"
+      }
+   ],
+   "2400": [
+      {
+         "otherTokenID": 1,
+         "address": "0xc308767400663e657E3F46E67a2e79135E9e0B47"
+      }
+   ],
+   "2421": [
+      {
+         "otherTokenID": 2,
+         "address": "0xe62D5adcD253B5F5b17209C3e57222B23D79e874"
+      }
+   ],
+   "2776": [
+      {
+         "otherTokenID": 45,
+         "address": "0xf7A7CA4021168c849437d893DA4D34Cf3F3A799E"
+      }
+   ],
+   "3192": [
+      {
+         "otherTokenID": 85713,
+         "address": "0xbC8496cf89a8324B6C523ebf831D677ef6f1319b"
+      }
+   ],
+   "3610": [
+      {
+         "otherTokenID": 265544,
+         "address": "0xBbc83820111f05aA33c037766e008d5878Fa61Ff"
+      }
+   ],
+   "3803": [
+      {
+         "otherTokenID": 82,
+         "address": "0x46beb8Aee822B0aC48F3bB335A4dB166acEA79Be"
+      }
+   ],
+   "3814": [
+      {
+         "otherTokenID": 256936,
+         "address": "0x1f9306d23663e822De8A8387C1e7Bd4F7C91A95e"
+      }
+   ],
+   "4277": [
+      {
+         "otherTokenID": 45,
+         "address": "0x9B2e58EE96863Ea6CC59BB008AFc4c25b47888bb"
+      }
+   ],
+   "5070": [
+      {
+         "otherTokenID": 45,
+         "address": "0x5ec7B77d8F2688A112Ddf75AeCa51E19168CF2Ab"
+      }
+   ],
+   "5097": [
+      {
+         "otherTokenID": 21006,
+         "address": "0x0C7a47372Cc8cf83F37a1025753BdF084B35D581"
+      }
+   ],
+   "5428": [
+      {
+         "otherTokenID": 2,
+         "address": "0xa36F4B470D6Be30e90fd60B462fAaf38e052723E"
+      }
+   ],
+   "5482": [
+      {
+         "otherTokenID": 9,
+         "address": "0xA8E7Eb15EB291073395Cdc953aB15B76D41BA48D"
+      },
+      {
+         "otherTokenID": 2,
+         "address": "0x61fe43fFEe34e40cF8A71681eE6cfF25D7847277"
+      }
+   ],
+   "5932": [
+      {
+         "otherTokenID": 27,
+         "address": "0xA48B9B3d98A909101C8707E9030755B15072e7d9"
+      }
+   ],
+   "5939": [
+      {
+         "otherTokenID": 95,
+         "address": "0x5bDDe6ae7481F5D35F903C6A09e979e2E4bD5d53"
+      }
+   ],
+   "6679": [
+      {
+         "otherTokenID": 71458,
+         "address": "0x854CD7e35c2D60B9Cad38D911EF084B45b111Ab1"
+      }
+   ],
+   "6707": [
+      {
+         "otherTokenID": 553325,
+         "address": "0xF35c3111874EA4466aA3B3cCAd7Efb495D8e72E4"
+      }
+   ],
+   "7477": [
+      {
+         "otherTokenID": 45,
+         "address": "0x300a27d21b10c3604f3297FBAD7a5168c4c80001"
+      }
+   ],
+   "10312": [
+      {
+         "otherTokenID": 6214,
+         "address": "0xa492d37c90616f04234e23130426F30d7db0Bd1e"
+      }
+   ],
+   "10545": [
+      {
+         "otherTokenID": 45,
+         "address": "0x1f5EaEE4eC7D849DAb502F9429A6c211Bd5CBAFC"
+      }
+   ],
+   "10615": [
+      {
+         "otherTokenID": 7,
+         "address": "0x47a57DE09Ab80EAF7ac7F22333e145f4a86770Ce"
+      }
+   ],
+   "11144": [
+      {
+         "otherTokenID": 45,
+         "address": "0xf4dEa2451391c6fB8916692415459e6714b2a205"
+      }
+   ],
+   "11572": [
+      {
+         "otherTokenID": 2693,
+         "address": "0x179CEBF01731D1e8311898CBf6b321378462000A"
+      }
+   ],
+   "12121": [
+      {
+         "otherTokenID": 1127,
+         "address": "0x5388B42156781b7239562f7907169509B020d2eb"
+      }
+   ],
+   "12232": [
+      {
+         "otherTokenID": 1,
+         "address": "0x891bf12085732Ac0B0809Abcaead94fBB6411309"
+      }
+   ],
+   "13700": [
+      {
+         "otherTokenID": 151588,
+         "address": "0xCf01D62810080D94e13AD8Cc8ACeE49145D563B2"
+      }
+   ],
+   "18062": [
+      {
+         "otherTokenID": 51188,
+         "address": "0x6a59695D30B6E07369c4D15828a0C4839Db22024"
+      }
+   ],
+   "20126": [
+      {
+         "otherTokenID": 247190,
+         "address": "0x550Dd4B0BC19f0C6728b68e8CDc03Dd2a2D868e3"
+      }
+   ],
+   "24878": [
+      {
+         "otherTokenID": 58285,
+         "address": "0xc1ae2eB3F825881FA57f7D4879436fb99Da10785"
+      }
+   ],
+   "25775": [
+      {
+         "otherTokenID": 45,
+         "address": "0xB002E151443E02C7AFC6E5b80c1AA3cdF7bf535c"
+      },
+      {
+         "otherTokenID": 7,
+         "address": "0x1A67Ac88192A94CA008099e2474b415A3d5bb5C9"
+      }
+   ],
+   "27576": [
+      {
+         "otherTokenID": 440125,
+         "address": "0x30a00DA8EC397866ee7f180E86F58F2BAAFC0040"
+      }
+   ],
+   "29591": [
+      {
+         "otherTokenID": 95,
+         "address": "0x234bd9E142921948b179D3C98CBa4513DdE0a798"
+      }
+   ],
+   "30108": [
+      {
+         "otherTokenID": 2,
+         "address": "0xF2c5Bd636a3fa174dCCFf1fa573ab8a03c8915DE"
+      }
+   ],
+   "31459": [
+      {
+         "otherTokenID": 26607,
+         "address": "0x8f96eF33628a08A3ce479333022fF2813C4952a3"
+      }
+   ],
+   "31492": [
+      {
+         "otherTokenID": 58201,
+         "address": "0x275d5b03b286D9cE3c4299E03e55863D34506eC3"
+      }
+   ],
+   "31565": [
+      {
+         "otherTokenID": 45,
+         "address": "0xb93989648B7A9718c7084f7A16dcE9440E2241c2"
+      }
+   ],
+   "31646": [
+      {
+         "otherTokenID": 71458,
+         "address": "0x3cD19acFb479aDe05bB6956285a52AdEb5474481"
+      }
+   ],
+   "33633": [
+      {
+         "otherTokenID": 45,
+         "address": "0xfe4c9002E8e22AbAa22F9278388f860599D166F9"
+      }
+   ],
+   "42906": [
+      {
+         "otherTokenID": 45,
+         "address": "0x6aB6fe86266eD06786f6D30F7DEfBFe73f03F83a"
+      }
+   ],
+   "47336": [
+      {
+         "otherTokenID": 45,
+         "address": "0xAC752191eFb08F098b93e2C214f3B6383bE4CF42"
+      }
+   ],
+   "47385": [
+      {
+         "otherTokenID": 95,
+         "address": "0xB42Bd67ECDfb62f7071E682102830cC0FA48C708"
+      }
+   ],
+   "48960": [
+      {
+         "otherTokenID": 82,
+         "address": "0x5Bf59E3B02F734e5acc559fd1dc59e0a7bDA5252"
+      }
+   ],
+   "52988": [
+      {
+         "otherTokenID": 45,
+         "address": "0x41dd3fF35e70aC31B0B279e6F54bE7A0239AeD3d"
+      }
+   ],
+   "118458": [
+      {
+         "otherTokenID": 45,
+         "address": "0xd3665cE11c4795104844bd000465BAa5Af63e954"
+      }
+   ],
+   "122506": [
+      {
+         "otherTokenID": 9059,
+         "address": "0xEb25A9eE2B8DFe6021f5D898A541BeD466871403"
+      }
+   ],
+   "130701": [
+      {
+         "otherTokenID": 2,
+         "address": "0xC0C7feeA95ebE04CfAE26DebCdCc97F0B08E24Aa"
+      }
+   ],
+   "189609": [
+      {
+         "otherTokenID": 45,
+         "address": "0xEE4893598d26957cE9113f7bf8Ff239C0Bf739eF"
+      }
+   ],
+   "197704": [
+      {
+         "otherTokenID": 17775,
+         "address": "0x8659179fA9c20504AE6909AC46434123d990b98d"
+      }
+   ],
+   "233381": [
+      {
+         "otherTokenID": 221349,
+         "address": "0x0067816CC7939236aE58E7e795ed8dF5391FD262"
+      }
+   ],
+   "237647": [
+      {
+         "otherTokenID": 1547,
+         "address": "0xad231F4CDB8b22aD3D5f56A8Ab4c5e85bB7Dc724"
+      }
+   ],
+   "283513": [
+      {
+         "otherTokenID": 755810,
+         "address": "0x4ec533752aDDE80f1fbB2f1e281240F629e84653"
+      }
+   ],
+   "291099": [
+      {
+         "otherTokenID": 809900,
+         "address": "0x7e659b0612410fDB253E4d5b419895De391867DD"
+      }
+   ],
+   "410366": [
+      {
+         "otherTokenID": 7,
+         "address": "0xf98AC3aBb7743Ba877308792d270c11d371165c0"
+      }
+   ],
+   "546663": [
+      {
+         "otherTokenID": 45,
+         "address": "0x1570fd96f93629c3B0bfA1E892eAd924944635F7"
+      }
+   ]
+}

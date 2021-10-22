@@ -1,42 +1,44 @@
 module.exports = class Database {
     constructor() {
-        this.tables = require(__dirname + "/tables.json")
-        this.mysql = require('mysql-await');
-        this.loginData = require(__dirname + "/config.json")
-        this.pingIntervall = 7500
+        this.MySQL = require('mysql-await')
+        this.SSHTunnel = require("tunnel-ssh")
 
-        this.databaseName = this.loginData["database"]
+        this.tables = require(__dirname + "/tables.json")
+        const configFile = require(__dirname + "/config.json")
+        this.sshConfig = configFile["sshConfig"]
+        this.mysqlConfig = configFile["oldConfig"]
+
+        this.databaseName = this.mysqlConfig["database"]
     }
 
     async setup() {
-        this.con = this.mysql.createConnection(this.loginData);
+        // this.SSHTunnel(this.sshConfig, function (error) {
+        //     if (error)
+        //         console.log("Tunnel-Error:", error)
+        // });
+
+        this.con = this.MySQL.createConnection(this.mysqlConfig);
         await this.con.connect()
 
-        const tableNames = Object.keys(this.tables)
-        if (tableNames.length === 0) {
-            throw new Error("Specify table in tables.json first.")
-        } else {
-            await this._setupTables(tableNames)
+        if (this.tables.length > 0) {
+            for (const table of this.tables) {
+                await this.createTable(table["name"], table["columns"])
+            }
         }
-        setInterval(async () => {
-            this.custom("select * from information_schema.KEYWORDS limit 1").then()
-        }, this.pingIntervall)
     }
 
-    async _setupTables(tableNames) {
-        const results = await this.con.awaitQuery(
+    async createTable(tableName, columns) {
+        let existingTables = await this.con.awaitQuery(
             `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
         )
+        existingTables = existingTables.map(t => t["table_name"])
 
-        const existingTables = results.map(t => t["table_name"])
-        for (const table of tableNames) {
-            if (!existingTables.includes(table)) {
-                let columns = []
-                for (const column in this.tables[table])
-                    columns.push(`${column} ${this.tables[table][column]}`)
+        if (!existingTables.includes(tableName)) {
+            let formattedColumns = []
+            for (const column in columns)
+                formattedColumns.push(`${column} ${columns[column]}`)
 
-                await this.con.awaitQuery(`create table ${table} (${columns.join(", ")})`)
-            }
+            await this.con.awaitQuery(`create table ${tableName} (${formattedColumns.join(", ")})`)
         }
     }
 
@@ -68,7 +70,7 @@ module.exports = class Database {
                     insertValues.push("(" + values.join(", ") + ")")
                 }
                 return resolve(this.con.awaitQuery(
-                    `insert into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")}`
+                    `insert ignore into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")} `
                 ))
             } else if (defaultsAmount !== undefined) {
                 let insertValues = []
@@ -115,7 +117,10 @@ module.exports = class Database {
                 for (const jsonData of dataJsonArray) {
                     let values = []
                     for (const columnValue in jsonData)
-                        values.push(`"${jsonData[columnValue]}"`)
+                        if (jsonData[columnValue].toString().startsWith("("))
+                            values.push(`${jsonData[columnValue]}`)
+                        else
+                            values.push(`"${jsonData[columnValue]}"`)
 
                     insertValues.push("(" + values.join(", ") + ")")
                 }
