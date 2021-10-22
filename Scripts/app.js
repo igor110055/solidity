@@ -61,7 +61,7 @@ async function main() {
     const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
     const bestPairs = await basicFactory.getBestTokens()
 
-    await basicFactory.checkPairs(bestPairs, 100, async results => {
+    await basicFactory.checkPairs(bestPairs, 5, async results => {
         await doAsync(results, async result => {
             if (result["profit"] !== undefined) {
                 console.log(`Testing trade (${result["profitUSD"].toFixed(2)}$)`)
