@@ -1,23 +1,15 @@
 module.exports = class Database {
     constructor() {
         this.MySQL = require('mysql-await')
-        this.SSHTunnel = require("tunnel-ssh")
 
         this.tables = require(__dirname + "/tables.json")
-        const configFile = require(__dirname + "/config.json")
-        this.sshConfig = configFile["sshConfig"]
-        this.mysqlConfig = configFile["oldConfig"]
+        this.config = require(__dirname + "/config.json")
 
-        this.databaseName = this.mysqlConfig["database"]
+        this.databaseName = this.config.database
     }
 
     async setup() {
-        // this.SSHTunnel(this.sshConfig, function (error) {
-        //     if (error)
-        //         console.log("Tunnel-Error:", error)
-        // });
-
-        this.con = this.MySQL.createConnection(this.mysqlConfig);
+        this.con = this.MySQL.createConnection(this.config);
         await this.con.connect()
 
         if (this.tables.length > 0) {
@@ -25,10 +17,16 @@ module.exports = class Database {
                 await this.createTable(table["name"], table["columns"])
             }
         }
+
+        setInterval(() => {
+            this.custom(
+                `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}" limit 1`
+            )
+        }, 15000)
     }
 
     async createTable(tableName, columns) {
-        let existingTables = await this.con.awaitQuery(
+        let existingTables = await this.custom(
             `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
         )
         existingTables = existingTables.map(t => t["table_name"])

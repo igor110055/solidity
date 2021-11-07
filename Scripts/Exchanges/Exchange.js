@@ -5,6 +5,13 @@ module.exports = class Exchange {
 
         this.web3 = web3
         this.WETH = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        this.tableStructure = {
+            "number": "int primary key auto_increment",
+            "address": "varchar(45) unique",
+            "token0": "int",
+            "token1": "int",
+            "totalWETH": "decimal",
+        }
     }
 
     async getSwapFee(pairContract) {
@@ -43,7 +50,7 @@ module.exports = class Exchange {
                     "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
                 })
             } catch (e){
-                console.log("crashed", pairAddress, token0)
+                console.log("crashed", pairAddress, token0, e)
                 resolve({
                     "reserve0": 0,
                     "reserve1": 0
@@ -69,12 +76,15 @@ module.exports = class Exchange {
                 const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
                 const token0 = await pairContract.methods.token0.call().call()
                 const token1 = await pairContract.methods.token1.call().call()
+                const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
                 return resolve({
                     "number": number,
                     "address": pairAddress,
                     "token0": token0,
-                    "token1": token1
+                    "token1": token1,
+                    "reserve0": _reserve0,
+                    "reserve1": _reserve1,
                 })
             } catch (e) {
                 return reject(e.toString())
@@ -82,7 +92,7 @@ module.exports = class Exchange {
         })
     }
 
-    async swapToETH(amountIn, token) {
+    async swapToWETH(amountIn, token) {
         return new Promise(async resolve => {
             if (token !== this.WETH) {
                 try {

@@ -10,7 +10,6 @@
     "chai-as-promised": "^7.1.1",
     "mysql-await": "^2.1.8",
     "truffle": "^5.4.10",
-    "tunnel-ssh": "^4.1.6",
     "web3": "^1.5.3",
     "web3-providers-ws": "^1.6.0"
   }
