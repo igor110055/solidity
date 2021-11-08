@@ -1,3 +1,5 @@
+const fs = require("fs")
+
 module.exports = {
     getMax: array => {
         if (array.length > 0) {
@@ -45,5 +47,11 @@ module.exports = {
     getExchangeAddress: (exchanges, exchangeName) => {
         const tempMapped = exchanges.map(e => e.tableName)
         return exchanges[tempMapped.indexOf(exchangeName)].routerAddress
+    },
+    saveJson: (fileName, data) => {
+        fs.writeFileSync(fileName, JSON.stringify(data, null, 3))
+    },
+    printHeadline: text => {
+        console.log(`\x1b[32m${text}\x1b[0m`)
     }
 }

@@ -56,29 +56,23 @@ module.exports = class Database {
         })
     }
 
-    async insertMultiple(tableName, jsonColumns = undefined, dataJsonArray = undefined, defaultsAmount = undefined) {
+    async insertMultiple(tableName, jsonColumns, dataJsonArray) {
         return new Promise(async resolve => {
-            if (jsonColumns !== undefined && dataJsonArray !== undefined) {
-                let insertValues = []
-                for (const jsonData of dataJsonArray) {
-                    let values = []
-                    for (const columnValue in jsonData)
+            let insertValues = []
+            for (const jsonData of dataJsonArray) {
+                let values = []
+                for (const columnValue in jsonData)
+                    if (jsonData[columnValue].toString().startsWith("("))
+                        values.push(`${jsonData[columnValue]}`)
+                    else
                         values.push(`"${jsonData[columnValue]}"`)
 
-                    insertValues.push("(" + values.join(", ") + ")")
-                }
-                return resolve(this.con.awaitQuery(
-                    `insert ignore into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")} `
-                ))
-            } else if (defaultsAmount !== undefined) {
-                let insertValues = []
-                for (let i = 0; i < defaultsAmount; i++) {
-                    insertValues.push(`()`)
-                }
-                return resolve(this.con.awaitQuery(
-                    `insert into ${tableName} () values${insertValues.join(", ")}`
-                ))
+                insertValues.push("(" + values.join(", ") + ")")
             }
+
+            return resolve(this.con.awaitQuery(
+                `insert ignore into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")} `
+            ))
         })
     }
 

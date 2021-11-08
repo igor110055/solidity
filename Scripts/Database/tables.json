@@ -3,7 +3,8 @@
     "name": "Tokens",
     "columns": {
       "tokenID": "int primary key auto_increment",
-      "tokenAddress": "varchar(45) not null unique"
+      "tokenAddress": "varchar(45) not null unique",
+      "inWETH": "text"
     }
   }
 ]

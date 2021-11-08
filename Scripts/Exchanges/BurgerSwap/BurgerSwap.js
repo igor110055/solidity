@@ -18,7 +18,7 @@ class BurgerSwap extends Exchange {
         this.routerAddress = "0x789c11212EaCA5312d4aa6d63148613e658CcFAd"
         this.routerContract = new this.web3.eth.Contract(this.routerABI, this.routerAddress)
 
-        this.tableName = "BurgerSwap"
+        this.tableName = "BurgerSwapPairs"
     }
 
     async getSwapFee(pairContract){

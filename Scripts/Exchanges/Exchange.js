@@ -10,7 +10,8 @@ module.exports = class Exchange {
             "address": "varchar(45) unique",
             "token0": "int",
             "token1": "int",
-            "totalWETH": "decimal",
+            "totalWETH": "text",
+            "useful": "bool"
         }
     }
 
@@ -38,7 +39,7 @@ module.exports = class Exchange {
     }
 
     async getReservesFromPair(pairAddress, token0) {
-        return new Promise(async resolve => {
+        return new Promise(async (resolve, reject) => {
             try{
                 const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
                 const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
@@ -50,45 +51,18 @@ module.exports = class Exchange {
                     "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
                 })
             } catch (e){
-                console.log("crashed", pairAddress, token0, e)
-                resolve({
-                    "reserve0": 0,
-                    "reserve1": 0
-                })
+                console.log("crashed (getReservesFromPair)", pairAddress, token0, e.message)
+                reject()
             }
         })
     }
 
-    async getTotalPairs() {
+    async getPairs(startingBlock, endingBlock){
         return new Promise(async resolve => {
-            const allPairsLength = await this.factoryContract.methods.allPairsLength.call().call()
-            return resolve(allPairsLength)
-        })
-    }
-
-    async getPairUsingNumber(number) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const pairAddress = await this.factoryContract.methods.allPairs(number).call()
-                if (pairAddress === "0x0000000000000000000000000000000000000000")
-                    return reject("Not a valid pair")
-
-                const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
-                const token0 = await pairContract.methods.token0.call().call()
-                const token1 = await pairContract.methods.token1.call().call()
-                const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
-
-                return resolve({
-                    "number": number,
-                    "address": pairAddress,
-                    "token0": token0,
-                    "token1": token1,
-                    "reserve0": _reserve0,
-                    "reserve1": _reserve1,
-                })
-            } catch (e) {
-                return reject(e.toString())
-            }
+            resolve(this.factoryContract.getPastEvents("PairCreated", {
+                fromBlock: startingBlock,
+                toBlock: endingBlock
+            }))
         })
     }
 
@@ -98,7 +72,7 @@ module.exports = class Exchange {
                 try {
                     const amountsOut = await this.routerContract.methods.getAmountsOut(amountIn.toString(), [token, this.WETH]).call()
                     return resolve(amountsOut[1])
-                } catch {
+                } catch{
                     return resolve(0)
                 }
             }
