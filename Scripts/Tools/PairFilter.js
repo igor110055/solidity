@@ -5,7 +5,7 @@ module.exports = class PairFilter {
         this.database = database
 
         this.interval = 5000
-        this.parallelTokens = 300
+        this.parallelTokens = 250
         this.parallelPairs = 10
         this.showStatus = true
         this.minWETHInPair = 1
