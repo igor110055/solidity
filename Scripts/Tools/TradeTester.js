@@ -25,18 +25,18 @@ class TradeTester {
         }).send({
             from: this.accountAddress,
             gas: 5000000,
-            gasPrice: this.web3.utils.toWei("10", "gwei")
+            gasPrice: (this.web3()).utils.toWei("10", "gwei")
         })
 
-        await this.web3.eth.sendTransaction({
+        await (this.web3()).eth.sendTransaction({
             from: this.accountAddress,
             gas: 5000000,
-            gasPrice: this.web3.utils.toWei("10", "gwei"),
-            value: this.web3.utils.toWei("10", "ether"),
+            gasPrice: (this.web3()).utils.toWei("10", "gwei"),
+            value: (this.web3()).utils.toWei("10", "ether"),
             to: this.contract.options.address
         })
 
-        this.transactionCount = await this.web3.eth.getTransactionCount(this.accountAddress)
+        this.transactionCount = await (this.web3()).eth.getTransactionCount(this.accountAddress)
     }
 
     async testTrade(token0, token1, amountIn, borrowPair, exchangeA, exchangeB, exchangeC) {
@@ -53,12 +53,12 @@ class TradeTester {
             this.contract.methods.execute(fsID, token0, token1, amountIn, borrowPair, exchangeA, exchangeB, exchangeC).send({
                 from: this.accountAddress,
                 gas: 5000000,
-                gasPrice: this.web3.utils.toWei("10", "gwei"),
+                gasPrice: (this.web3()).utils.toWei("10", "gwei"),
                 nonce: this.transactionCount
             }).on("receipt", async () => {
                 this.contract.getPastEvents("LogFlashSwap", {
                     filter: {"fsID": fsID},
-                    fromBlock: (await this.web3.eth.getBlockNumber()) - 10,
+                    fromBlock: (await (this.web3()).eth.getBlockNumber()) - 10,
                     toBlock: "latest"
                 }, (error, result) => {
                     if (error) {

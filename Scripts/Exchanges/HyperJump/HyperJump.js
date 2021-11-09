@@ -12,11 +12,11 @@ class HyperJump extends Exchange {
 
         this.factoryABI = require("./ABIs/Factory.json")
         this.factoryAddress = "0xaC653cE27E04C6ac565FD87F18128aD33ca03Ba2"
-        this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
+        this.factoryContract = new (this.web3()).eth.Contract(this.factoryABI, this.factoryAddress)
 
         this.routerABI = require("./ABIs/Router.json")
         this.routerAddress = "0x3bc677674df90A9e5D741f28f6CA303357D0E4Ec"
-        this.routerContract = new this.web3.eth.Contract(this.routerABI, this.routerAddress)
+        this.routerContract = new (this.web3()).eth.Contract(this.routerABI, this.routerAddress)
 
         this.tableName = "HyperJumpPairs"
     }

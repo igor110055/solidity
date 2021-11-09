@@ -12,11 +12,11 @@ class ApeSwap extends Exchange {
 
         this.factoryABI = require("./ABIs/Factory.json")
         this.factoryAddress = "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6"
-        this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
+        this.factoryContract = new (this.web3()).eth.Contract(this.factoryABI, this.factoryAddress)
 
         this.routerABI = require("./ABIs/Router.json")
         this.routerAddress = "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7"
-        this.routerContract = new this.web3.eth.Contract(this.routerABI, this.routerAddress)
+        this.routerContract = new (this.web3()).eth.Contract(this.routerABI, this.routerAddress)
 
         this.tableName = "ApeSwapPairs"
     }

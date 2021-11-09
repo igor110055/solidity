@@ -1,4 +1,4 @@
-const {doAsync, getExchangeAddress} = require("./Tools/Helpers")
+const {doAsync, getExchangeAddress, web3} = require("./Tools/Helpers")
 
 async function main() {
     const options = {
@@ -20,15 +20,6 @@ async function main() {
     // Ankr: 20 per Second (1.2k per Minute)
     // BSC: 2k per Minute
 
-    const links = [
-        "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws",
-        "wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main",
-        "wss://bsc-ws-node.nariox.org:443",
-        "wss://bsc.getblock.io/mainnet/?api_key=f9d5ea69-0b99-4dba-8513-7ab51df082a0"
-    ]
-
-    const Web3 = require("web3")
-    const web3 = new Web3(new (require("web3-providers-ws"))(links[0]))
     const database = new (require("./Database/Database"))
     await database.setup()
 

@@ -12,11 +12,11 @@ class Biswap extends Exchange {
 
         this.factoryABI = require("./ABIs/Factory.json")
         this.factoryAddress = "0x858E3312ed3A876947EA49d572A7C42DE08af7EE"
-        this.factoryContract = new this.web3.eth.Contract(this.factoryABI, this.factoryAddress)
+        this.factoryContract = new (this.web3()).eth.Contract(this.factoryABI, this.factoryAddress)
 
         this.routerABI = require("./ABIs/Router.json")
         this.routerAddress = "0x3a6d8cA21D1CF76F653A67577FA0D27453350dD8"
-        this.routerContract = new this.web3.eth.Contract(this.routerABI, this.routerAddress)
+        this.routerContract = new (this.web3()).eth.Contract(this.routerABI, this.routerAddress)
 
         this.tableName = "BiswapPairs"
     }

@@ -31,7 +31,7 @@ module.exports = class PairFetcher {
         const ticker = async () => {
             if (!this.alreadyFetching) {
                 this.alreadyFetching = true
-                this.currentBlockNumber = await this.exchanges[0].web3.eth.getBlockNumber()
+                this.currentBlockNumber = await (this.exchanges[0].web3()).eth.getBlockNumber()
                 await doAsync(this.exchanges, e => this.updateDatabase(e))
 
                 if (this.showStatus)
