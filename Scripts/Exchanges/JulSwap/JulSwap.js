@@ -1,10 +1,8 @@
 const Exchange = require("../Exchange")
+const { web3 } = require("../../Tools/Helpers")
 
 class JulSwap extends Exchange {
-    constructor(web3) {
-        if (web3 === undefined)
-            throw new Error("Constructor not satisfied")
-
+    constructor() {
         super();
 
         this.web3 = web3
@@ -12,11 +10,11 @@ class JulSwap extends Exchange {
 
         this.factoryABI = require("./ABIs/Factory.json")
         this.factoryAddress = "0x553990F2CBA90272390f62C5BDb1681fFc899675"
-        this.factoryContract = new (this.web3()).eth.Contract(this.factoryABI, this.factoryAddress)
+        this.factoryContract = new web3.eth.Contract(this.factoryABI, this.factoryAddress)
 
         this.routerABI = require("./ABIs/Router.json")
         this.routerAddress = "0xbd67d157502A23309Db761c41965600c2Ec788b2"
-        this.routerContract = new (this.web3()).eth.Contract(this.routerABI, this.routerAddress)
+        this.routerContract = new web3.eth.Contract(this.routerABI, this.routerAddress)
 
         this.tableName = "JulSwapPairs"
     }

@@ -54,31 +54,46 @@ module.exports = {
     },
     printHeadline: text => {
         console.log(`\x1b[32m${text}\x1b[0m`)
-    }
+    },
+    weightedRandom: values => {
+        let sum = 0
+        for (let i = 0; i < values.length; i++) {
+            sum += values[i]
+        }
+        let random = Math.floor(Math.random() * sum)
+        let current = 0
+        for (let i = 0; i < values.length; i++) {
+            current += values[i]
+            if (random < current) {
+                return i
+            }
+        }
+        return values.length - 1
+    },
 }
 
-let usedUp = 5
-let web3Objects = [
-    new Web3("wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws"),
-    new Web3("wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main"),
-    new Web3("wss://bsc-ws-node.nariox.org:443")
+let web3Config = [
+    [3000, "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws"],
+    // [1200, "wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main"],
+    [2000, "wss://bsc-ws-node.nariox.org:443"]
 ]
-let capacities = [
-    3000,
-    1200,
-    2000
-]
+let web3Objects = web3Config.map(config => {
+    return new Web3(new Web3.providers.WebsocketProvider(
+        config[1],
+        {
+            clientConfig: {
+                maxReceivedFrameSize: 100000000,
+                maxReceivedMessageSize: 100000000
+            }
+        }
+    ))
+})
 
-capacities = capacities.map(c => c * 0.9)
-let currentIndex = 0
+let weights = web3Config.map(config => config[0])
+
 module.exports = {
     ...module.exports,
-    web3: () => {
-        if (usedUp >= capacities[currentIndex]) {
-            currentIndex = (currentIndex + 1) % web3Objects.length
-            usedUp = 0
-        }
-        usedUp += 1
-        return web3Objects[currentIndex]
+    get web3() {
+        return web3Objects[module.exports.weightedRandom(weights)]
     }
 }

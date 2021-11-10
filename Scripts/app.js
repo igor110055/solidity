@@ -1,4 +1,4 @@
-const {doAsync, getExchangeAddress, web3} = require("./Tools/Helpers")
+const {doAsync, getExchangeAddress} = require("./Tools/Helpers")
 
 async function main() {
     const options = {
@@ -15,28 +15,23 @@ async function main() {
         }
     }
 
-    // Notes:
-    // Moralis: 3k per Minute
-    // Ankr: 20 per Second (1.2k per Minute)
-    // BSC: 2k per Minute
-
     const database = new (require("./Database/Database"))
     await database.setup()
 
     // const calculator = new (require("./Tools/Calculator"))
 
     const exchanges = [
-        // new (require("./Exchanges/ApeSwap/ApeSwap"))(web3),
-        new (require("./Exchanges/Biswap/Biswap"))(web3),
-        // new (require("./Exchanges/BurgerSwap/BurgerSwap"))(web3),
-        // new (require("./Exchanges/CheeseSwap/CheeseSwap"))(web3),
-        // new (require("./Exchanges/HyperJump/HyperJump"))(web3),
-        // new (require("./Exchanges/JetSwap/JetSwap"))(web3),
-        // new (require("./Exchanges/JulSwap/JulSwap"))(web3),
-        // new (require("./Exchanges/Mdex/Mdex"))(web3),
-        // new (require("./Exchanges/Pancake/PancakeV1"))(web3),
-        new (require("./Exchanges/Pancake/PancakeV2"))(web3),
-        // new (require("./Exchanges/WaultSwap/WaultSwap"))(web3)
+        new (require("./Exchanges/ApeSwap/ApeSwap"))(),
+        new (require("./Exchanges/Biswap/Biswap"))(),
+        new (require("./Exchanges/BurgerSwap/BurgerSwap"))(),
+        new (require("./Exchanges/CheeseSwap/CheeseSwap"))(),
+        new (require("./Exchanges/HyperJump/HyperJump"))(),
+        new (require("./Exchanges/JetSwap/JetSwap"))(),
+        new (require("./Exchanges/JulSwap/JulSwap"))(),
+        new (require("./Exchanges/Mdex/Mdex"))(),
+        new (require("./Exchanges/Pancake/PancakeV1"))(),
+        new (require("./Exchanges/Pancake/PancakeV2"))(),
+        new (require("./Exchanges/WaultSwap/WaultSwap"))()
     ]
 
     for (const exchange of exchanges) {
@@ -46,9 +41,9 @@ async function main() {
     const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
     await pairFetcher.start()
 
-    const pairFilter = new (require("./Tools/PairFilter"))(database, ...exchanges)
-    await pairFilter.setup()
-    await pairFilter.start()
+    // const pairFilter = new (require("./Tools/PairFilter"))(database, ...exchanges)
+    // await pairFilter.setup()
+    // await pairFilter.start()
 
     // const tradeTester = new (require("./Tools/TradeTester"))(database)
     // await tradeTester.setup()

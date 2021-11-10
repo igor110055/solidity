@@ -1,9 +1,10 @@
+const { web3 } = require("../Tools/Helpers")
+
 module.exports = class Exchange {
-    constructor(web3) {
+    constructor() {
         if (new.target === Exchange)
             throw new Error("Class is abstract.")
 
-        this.web3 = web3
         this.WETH = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
         this.tableStructure = {
             "number": "int primary key auto_increment",
@@ -25,7 +26,7 @@ module.exports = class Exchange {
             if (pairAddress === "0x0000000000000000000000000000000000000000")
                 return reject("Not a valid pair")
 
-            const pairContract = new (this.web3()).eth.Contract(this.pairABI, pairAddress)
+            const pairContract = new web3.eth.Contract(this.pairABI, pairAddress)
             const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
             const token0InPair = await pairContract.methods.token0.call().call()
@@ -41,7 +42,7 @@ module.exports = class Exchange {
     async getReservesFromPair(pairAddress, token0) {
         return new Promise(async (resolve, reject) => {
             try{
-                const pairContract = new (this.web3()).eth.Contract(this.pairABI, pairAddress)
+                const pairContract = new web3.eth.Contract(this.pairABI, pairAddress)
                 const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
 
                 const token0InPair = await pairContract.methods.token0.call().call()

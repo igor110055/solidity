@@ -1,35 +1,35 @@
 {
    "PancakeV2Pairs": {
-      "current": 12502312
+      "current": 9005000
    },
    "ApeSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "BiswapPairs": {
-      "current": 12502312
+      "current": 12542395
    },
    "BurgerSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "CheeseSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "HyperJumpPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "JetSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "JulSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "MdexPairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "PancakeV1Pairs": {
-      "current": 12480905
+      "current": 12542395
    },
    "WaultSwapPairs": {
-      "current": 12480905
+      "current": 12542395
    }
 }

@@ -5,7 +5,7 @@ module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 30000
+        this.interval = 3000
         this.parallelBlocks = 5000
         this.showStatus = true
 
@@ -26,12 +26,12 @@ module.exports = class PairFetcher {
         }
     }
 
-    async start(){
+    async start() {
         this.alreadyFetching = false
         const ticker = async () => {
             if (!this.alreadyFetching) {
                 this.alreadyFetching = true
-                this.currentBlockNumber = await (this.exchanges[0].web3()).eth.getBlockNumber()
+                this.currentBlockNumber = await (this.exchanges[0].web3).eth.getBlockNumber()
                 await doAsync(this.exchanges, e => this.updateDatabase(e))
 
                 if (this.showStatus)
@@ -77,7 +77,7 @@ module.exports = class PairFetcher {
     async updateDatabase(exchange) {
         const syncedBlock = this.syncingStatus[exchange.tableName]["current"]
 
-        if (this.currentBlockNumber > syncedBlock) {
+        if (this.currentBlockNumber - 50 > syncedBlock) {
             const endingBlock = Math.min(this.currentBlockNumber, syncedBlock + this.parallelBlocks)
             await this.fetchPairs(exchange, syncedBlock, endingBlock)
         }
@@ -88,8 +88,8 @@ module.exports = class PairFetcher {
         let finishedExchanges = []
         let waitingFor = []
         for (const exchangeName of Object.keys(this.syncingStatus).filter(e => this.exchanges.map(e => e.tableName).includes(e))) {
-            const synced = this.syncingStatus[exchangeName]["current"]
-            if (synced === this.currentBlockNumber) {
+            const synced = this.syncingStatus[exchangeName]["current"] + 50
+            if (synced >= this.currentBlockNumber) {
                 finishedExchanges.push(exchangeName)
             } else {
                 waitingFor.push(exchangeName)
