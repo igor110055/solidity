@@ -1,20 +1,6 @@
 const {doAsync, getExchangeAddress} = require("./Tools/Helpers")
 
 async function main() {
-    const options = {
-        timeout: 30000,
-        clientConfig: {
-            keepalive: true,
-            keepaliveInterval: 60000
-        },
-        reconnect: {
-            auto: true,
-            delay: 5000,
-            maxAttempts: 999999,
-            onTimeout: true
-        }
-    }
-
     const database = new (require("./Database/Database"))
     await database.setup()
 
@@ -42,7 +28,6 @@ async function main() {
     await pairFetcher.start()
 
     // const pairFilter = new (require("./Tools/PairFilter"))(database, ...exchanges)
-    // await pairFilter.setup()
     // await pairFilter.start()
 
     // const tradeTester = new (require("./Tools/TradeTester"))(database)
@@ -75,5 +60,8 @@ async function main() {
     // })
 }
 
-
-main().then()
+setTimeout(() => {
+    main().catch(error => {
+        console.log(error)
+    })
+}, 1000)

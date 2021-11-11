@@ -1,4 +1,4 @@
-const { web3 } = require("../Tools/Helpers")
+const {web3} = require("../Tools/Helpers")
 
 module.exports = class Exchange {
     constructor() {
@@ -11,7 +11,7 @@ module.exports = class Exchange {
             "address": "varchar(45) unique",
             "token0": "int",
             "token1": "int",
-            "totalWETH": "text",
+            "totalTransactions": "int",
             "useful": "bool"
         }
     }
@@ -19,7 +19,7 @@ module.exports = class Exchange {
     async getSwapFee(pairContract) {
         throw new Error("You need to overwrite this function.")
     }
-    
+
     async getReserves(token0, token1) {
         return new Promise(async (resolve, reject) => {
             const pairAddress = await this.factoryContract.methods.getPair(token0, token1).call()
@@ -27,7 +27,7 @@ module.exports = class Exchange {
                 return reject("Not a valid pair")
 
             const pairContract = new web3.eth.Contract(this.pairABI, pairAddress)
-            const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
+            const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
 
             const token0InPair = await pairContract.methods.token0.call().call()
 
@@ -41,9 +41,9 @@ module.exports = class Exchange {
 
     async getReservesFromPair(pairAddress, token0) {
         return new Promise(async (resolve, reject) => {
-            try{
+            try {
                 const pairContract = new web3.eth.Contract(this.pairABI, pairAddress)
-                const { _reserve0, _reserve1 } = await pairContract.methods.getReserves().call()
+                const {_reserve0, _reserve1} = await pairContract.methods.getReserves().call()
 
                 const token0InPair = await pairContract.methods.token0.call().call()
 
@@ -51,19 +51,40 @@ module.exports = class Exchange {
                     "reserve0": token0 === token0InPair ? _reserve0 : _reserve1,
                     "reserve1": token0 === token0InPair ? _reserve1 : _reserve0
                 })
-            } catch (e){
+            } catch (e) {
                 console.log("crashed (getReservesFromPair)", pairAddress, token0, e.message)
                 reject()
             }
         })
     }
 
-    async getPairs(startingBlock, endingBlock){
+    async getTotalPairs() {
         return new Promise(async resolve => {
-            resolve(this.factoryContract.getPastEvents("PairCreated", {
-                fromBlock: startingBlock,
-                toBlock: endingBlock
-            }))
+            const allPairsLength = await this.factoryContract.methods.allPairsLength.call().call()
+            return resolve(allPairsLength)
+        })
+    }
+
+    async getPairUsingNumber(number) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const pairAddress = await this.factoryContract.methods.allPairs(number).call()
+                if (pairAddress === "0x0000000000000000000000000000000000000000")
+                    return reject("Not a valid pair")
+
+                const pairContract = new this.web3.eth.Contract(this.pairABI, pairAddress)
+                const token0 = await pairContract.methods.token0.call().call()
+                const token1 = await pairContract.methods.token1.call().call()
+
+                return resolve({
+                    "number": number,
+                    "address": pairAddress,
+                    "token0": token0,
+                    "token1": token1
+                })
+            } catch (e) {
+                return reject(e.toString())
+            }
         })
     }
 
@@ -73,7 +94,7 @@ module.exports = class Exchange {
                 try {
                     const amountsOut = await this.routerContract.methods.getAmountsOut(amountIn.toString(), [token, this.WETH]).call()
                     return resolve(amountsOut[1])
-                } catch{
+                } catch {
                     return resolve(0)
                 }
             }

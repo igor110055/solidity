@@ -1,111 +1,122 @@
-const {doAsync, saveJson, printHeadline} = require("../Tools/Helpers")
-const fs = require("fs")
+const {doAsync, printHeadline} = require("../Tools/Helpers")
 
 module.exports = class PairFetcher {
     constructor(database) {
         this.database = database
 
-        this.interval = 3000
-        this.parallelBlocks = 5000
+        this.interval = 5000
+        this.parallelFetchLimit = 200
+        this.parallelInsertLimit = this.parallelFetchLimit
         this.showStatus = true
 
-        if (!fs.existsSync(__dirname + "/syncing.json")) {
-            fs.writeFileSync(__dirname + "/syncing.json", JSON.stringify({}))
-        }
-        this.syncingStatus = JSON.parse(fs.readFileSync(__dirname + "/syncing.json"))
-
         this.exchanges = []
+        this.exchangeData = {}
         for (let i = 1; i < arguments.length; i++) {
             this.exchanges.push(arguments[i])
-
-            if (!Object.keys(this.syncingStatus).includes(arguments[i].tableName)) {
-                this.syncingStatus[arguments[i].tableName] = {
-                    "current": 0
-                }
-            }
+            this.exchangeData[arguments[i].tableName] = {}
         }
+
+        this.alreadyFetching = false
     }
 
     async start() {
-        this.alreadyFetching = false
         const ticker = async () => {
             if (!this.alreadyFetching) {
                 this.alreadyFetching = true
-                this.currentBlockNumber = await (this.exchanges[0].web3).eth.getBlockNumber()
                 await doAsync(this.exchanges, e => this.updateDatabase(e))
 
                 if (this.showStatus)
                     await this.printStatus()
 
-                saveJson(__dirname + "/syncing.json", this.syncingStatus)
                 this.alreadyFetching = false
             }
         }
 
         ticker().then()
-        setInterval(ticker, this.interval)
+        this.intervalID = setInterval(ticker, this.interval)
     }
 
-    async fetchPairs(exchange, startingBlock, endingBlock) {
-        let results = await exchange.getPairs(startingBlock, endingBlock)
-        if (results.length > 0) {
-            results = results.map(r => r["returnValues"])
-            const allTokens = new Set(results.map(r => r["0"]).concat(results.map(r => r["1"])))
+    async stop() {
+        clearInterval(this.intervalID)
+    }
+
+    async fetchPairs(exchange) {
+        const missingPairs = await this.database.select(exchange.tableName, "number",
+            `where address is null and number <= ${this.exchangeData[exchange.tableName]["total"]} 
+            ${this.parallelFetchLimit > 0 ? ` limit ${this.parallelFetchLimit}` : ""}`
+        )
+
+        if (missingPairs.length > 0) {
+            let results = await doAsync(missingPairs, p => exchange.getPairUsingNumber(p["number"] - 1))
+            if (results.length === 0)
+                return
+
+            const allTokens = new Set(results.map(r => r["token0"]).concat(results.map(r => r["token1"])))
+
             const commands = Array(...allTokens).map(t => `
                 select '${t}' from dual where not exists (select * from Tokens where tokenAddress='${t}')
             `)
             await this.database.custom("insert into Tokens (tokenAddress) " + commands.join(" union "))
 
             results = results.map(r => {
-                return {
-                    "token0": `(select tokenID from Tokens where tokenAddress = '${r["0"]}' limit 1)`,
-                    "token1": `(select tokenID from Tokens where tokenAddress = '${r["1"]}' limit 1)`,
-                    "address": r["2"],
-                    "number": r["3"],
-                }
+                r["number"] += 1
+                r["token0"] = `(select tokenID from Tokens where tokenAddress = '${r["token0"]}' limit 1)`
+                r["token1"] = `(select tokenID from Tokens where tokenAddress = '${r["token1"]}' limit 1)`
+                return r
             })
 
-            await this.database.insertMultiple(
-                exchange.tableName,
-                Object.keys(results[0]),
-                results
-            )
+            await this.database.updateMultiple(exchange.tableName, Object.keys(results[0]), results, "number")
         }
-        this.syncingStatus[exchange.tableName].current = endingBlock
     }
 
     async updateDatabase(exchange) {
-        const syncedBlock = this.syncingStatus[exchange.tableName]["current"]
+        const allKnownPairs = (await this.database.select(exchange.tableName, "count(*) as n"))[0]["n"]
+        const totalPairs = await exchange.getTotalPairs()
 
-        if (this.currentBlockNumber - 50 > syncedBlock) {
-            const endingBlock = Math.min(this.currentBlockNumber, syncedBlock + this.parallelBlocks)
-            await this.fetchPairs(exchange, syncedBlock, endingBlock)
+        this.exchangeData[exchange.tableName] = {
+            "total": totalPairs,
+            "known": allKnownPairs
+        }
+
+        if (totalPairs > allKnownPairs) {
+            const required = totalPairs - allKnownPairs
+            const number = required <= this.parallelInsertLimit ? required : this.parallelInsertLimit
+
+            let values = []
+            for (let i = 0; i < number; i++)
+                values.push("()")
+            await this.database.custom(`
+                insert into ${exchange.tableName} () values ${values.join(",")}
+            `)
+
+            await this.fetchPairs(exchange)
         }
     }
 
     async printStatus() {
         console.log()
+
         let finishedExchanges = []
         let waitingFor = []
-        for (const exchangeName of Object.keys(this.syncingStatus).filter(e => this.exchanges.map(e => e.tableName).includes(e))) {
-            const synced = this.syncingStatus[exchangeName]["current"] + 50
-            if (synced >= this.currentBlockNumber) {
-                finishedExchanges.push(exchangeName)
-            } else {
-                waitingFor.push(exchangeName)
-            }
+        for (const exchange in this.exchangeData) {
+            if (this.exchangeData[exchange]["total"] <= this.exchangeData[exchange]["known"])
+                finishedExchanges.push(exchange)
+            else
+                waitingFor.push(exchange)
         }
 
         printHeadline("Fetching")
         if (finishedExchanges.length > 0) {
-            console.log(`Finished: ${finishedExchanges.join(", ")}`)
+            printHeadline("\tFinished:")
+            console.log(`\t${finishedExchanges.join(", ")}`)
         }
         if (waitingFor.length > 0) {
-            console.log("Waiting for: ")
+            printHeadline("\tWaiting for:", "orange")
             for (const exchangeName of waitingFor) {
-                const synced = this.syncingStatus[exchangeName]["current"]
-                console.log(`${exchangeName}: ${synced}/${this.currentBlockNumber} ` +
-                    `\x1b[31m(${(synced / this.currentBlockNumber * 100).toFixed(3)}%)\x1b[0m`
+                const known = this.exchangeData[exchangeName]["known"]
+                const total = this.exchangeData[exchangeName]["total"]
+                console.log(`\t${exchangeName}: ${known}/${total} ` +
+                    `\x1b[31m(${(known / total * 100).toFixed(3)}%)\x1b[0m`
                 )
             }
         }
