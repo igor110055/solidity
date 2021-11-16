@@ -10,9 +10,7 @@ module.exports = class Exchange {
             "number": "int primary key auto_increment",
             "address": "varchar(45) unique",
             "token0": "int",
-            "token1": "int",
-            "totalTransactions": "int",
-            "useful": "bool"
+            "token1": "int"
         }
     }
 

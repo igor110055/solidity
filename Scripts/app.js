@@ -27,9 +27,6 @@ async function main() {
     const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
     await pairFetcher.start()
 
-    // const pairFilter = new (require("./Tools/PairFilter"))(database, ...exchanges)
-    // await pairFilter.start()
-
     // const tradeTester = new (require("./Tools/TradeTester"))(database)
     // await tradeTester.setup()
 
