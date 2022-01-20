@@ -11,7 +11,7 @@ module.exports = class BasicFactory {
             this.exchanges.push(arguments[i])
 
         this.minProfitUSD = 0.6
-        this.ethPrice = 420
+        this.ethPrice = 650
         this.toUSD = eth => {
             return eth / 1E18 * this.ethPrice
         }
@@ -154,10 +154,10 @@ module.exports = class BasicFactory {
 
             if (BigInt(borrowReserve1) > BigInt(extrema1)) {
                 if (exchangeA1 === undefined)
-                return resolve(this.formatOutput(
-                    extrema1, profit1, amountOut1, amountOutUSD1, pair["token1"], pair["token0"],
-                    borrowAddress1, exchangeA1, exchangeB1, exchangeC1
-                ))
+                    return resolve(this.formatOutput(
+                        extrema1, profit1, amountOut1, amountOutUSD1, pair["token1"], pair["token0"],
+                        borrowAddress1, exchangeA1, exchangeB1, exchangeC1
+                    ))
             } else {
                 [extrema1, profit1, exchangeA1, exchangeB1] = await this.getBestInput(exchangeData, true, borrowReserve1);
                 [amountOut1, exchangeC1] = await this.getBestETHExchange(profit1, pair["token1"])
@@ -165,17 +165,19 @@ module.exports = class BasicFactory {
 
                 if (amountOutUSD0 > this.minProfitUSD || amountOutUSD1 > this.minProfitUSD) {
                     if (amountOutUSD0 > amountOutUSD1) {
-                        if (exchangeA0 === undefined)
-                        return resolve(this.formatOutput(
-                            extrema0, profit0, amountOut0, amountOutUSD0, pair["token0"], pair["token1"],
-                            borrowAddress0, exchangeA0, exchangeB0, exchangeC0
-                        ))
+                        if (exchangeA0 === undefined) {
+                            return resolve(this.formatOutput(
+                                extrema0, profit0, amountOut0, amountOutUSD0, pair["token0"], pair["token1"],
+                                borrowAddress0, exchangeA0, exchangeB0, exchangeC0
+                            ))
+                        }
                     } else {
-                        if (exchangeA1 === undefined)
-                        return resolve(this.formatOutput(
-                            extrema1, profit1, amountOut1, amountOutUSD1, pair["token1"], pair["token0"],
-                            borrowAddress1, exchangeA1, exchangeB1, exchangeC1
-                        ))
+                        if (exchangeA1 === undefined) {
+                            return resolve(this.formatOutput(
+                                extrema1, profit1, amountOut1, amountOutUSD1, pair["token1"], pair["token0"],
+                                borrowAddress1, exchangeA1, exchangeB1, exchangeC1
+                            ))
+                        }
                     }
                 }
             }
@@ -306,7 +308,7 @@ module.exports = class BasicFactory {
         for (const exchange of this.exchanges) {
             promises.push(new Promise(async resolve => {
                 resolve({
-                    "amountOut": await exchange.swapToETH(amountIn, token),
+                    "amountOut": await exchange.swapToWETH(amountIn, token),
                     "exchange": exchange.tableName
                 })
             }))

@@ -1,5 +1,5 @@
 module.exports = class Calculator {
-    static calculateFlashSwapFee = (loan) => {
+    static calculateFlashSwapFee = loan => {
         return (((loan * 3) / 997) + 1).toString().split(".")[0]
     }
 

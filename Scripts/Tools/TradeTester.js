@@ -1,10 +1,30 @@
+const Web3 = require("web3")
+const fs = require("fs")
+const ganache = require("ganache-cli")
+const util = require("util")
+
 class TradeTester {
     constructor(database) {
         this.database = database
-        this.fs = require("fs")
 
-        const Web3 = require("web3")
-        this.web3 = new Web3("ws://127.0.0.1:8545")
+        const log_file = fs.createWriteStream(__dirname + '/Logs/tradeTester.log', {flags: 'w'});
+
+        this.web3 = new Web3(ganache.provider({
+            fork: "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/archive/ws",
+            mnemonic: "develop oven fiscal debris thank solar science twice similar mix giraffe erupt scorpion quiz hover",
+            default_balance_ether: 10000,
+            total_accounts: 10,
+            logger: {
+                log: log => {
+                    log_file.write(util.format(log) + '\n');
+                },
+                error: log => {
+                    log_file.write(util.format(log) + '\n');
+                }
+            }
+        }))
+
+        // this.web3 = new Web3("ws://127.0.0.1:8545")
 
         this.accountAddress = "0x1EB930454a508999C1FB9550720218E407D86e5e"
         this.web3.eth.accounts.wallet.add("97c442ff6999b6a21fd910bb2ea2e11768e575f0a4f3a762fbb96f19033e1668")
@@ -15,9 +35,9 @@ class TradeTester {
     }
 
     async setup() {
-        const file = JSON.parse(this.fs.readFileSync(`../truffleBox/build/contracts/${this.contractFile}`).toString())
-        const abi = file["abi"]
-        const bytecode = file["bytecode"]
+        const jsonData = JSON.parse(fs.readFileSync(`../truffleBox/build/contracts/${this.contractFile}`).toString())
+        const abi = jsonData["abi"]
+        const bytecode = jsonData["bytecode"]
         this.contract = new this.web3.eth.Contract(abi, undefined)
 
         this.contract = await this.contract.deploy({
@@ -60,18 +80,35 @@ class TradeTester {
                     filter: {"fsID": fsID},
                     fromBlock: (await this.web3.eth.getBlockNumber()) - 10,
                     toBlock: "latest"
-                }, (error, result) => {
+                }, async (error, result) => {
                     if (error) {
                         console.log("Event crashed:", error)
                         return resolve(0)
                     } else {
-                        return resolve(result[0]["returnValues"]["profit"])
+                        const profitWETH = result[0]["returnValues"]["profit"]
+                        await this.database.insert("Trades", {
+                            "fsID": fsID,
+                            "token0": `(select tokenID from Tokens where tokenAddress = '${token0}' limit 1)`,
+                            "token1": `(select tokenID from Tokens where tokenAddress = '${token1}' limit 1)`,
+                            "amountIn": amountIn,
+                            "borrowPair": borrowPair,
+                            "exchangeA": exchangeA,
+                            "exchangeB": exchangeB,
+                            "exchangeC": exchangeC,
+                            "profitWETH": profitWETH,
+                            "timestamp": new Date().getTime()
+                        })
+                        return resolve(profitWETH)
                     }
                 })
             }).on("error", error => {
-                const data = error["data"]
-                const txn = Object.keys(data).filter(key => key.startsWith("0x"))[0]
-                return reject(data[txn]["reason"] !== undefined ? data[txn]["reason"] : "Other error: " + data[txn]["error"])
+                try {
+                    const data = error["results"]
+                    const txn = Object.keys(data).filter(key => key.startsWith("0x"))[0]
+                    return reject(data[txn]["reason"] !== undefined ? data[txn]["reason"] : "Other error: " + data[txn]["error"])
+                } catch {
+                    console.log("error", error)
+                }
             })
             this.transactionCount += 1
         })

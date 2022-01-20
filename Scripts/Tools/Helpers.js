@@ -25,25 +25,27 @@ module.exports = {
         return undefined
     },
     doAsync: async (array, handle, parallel) => {
-        if (parallel !== undefined) {
-            let results = []
-            let countDone = 0
-            while (countDone < array.length) {
-                let promises = []
-                for (let i = 0; i < Math.min(parallel, array.length - countDone); i++) {
-                    promises.push(handle(array[countDone + i]))
+        return new Promise(async resolve => {
+            if (parallel !== undefined) {
+                let results = []
+                let countDone = 0
+                while (countDone < array.length) {
+                    let promises = []
+                    for (let i = 0; i < Math.min(parallel, array.length - countDone); i++) {
+                        promises.push(handle(array[countDone + i]))
+                    }
+                    results.push(...(await Promise.all(promises).catch()))
+                    countDone += parallel
                 }
-                results.push(...(await Promise.all(promises).catch()))
-                countDone += parallel
+                resolve(results)
+            } else {
+                let promises = []
+                for (const item of array) {
+                    promises.push(handle(item))
+                }
+                Promise.all(promises).then(resolve).catch(() => resolve([]))
             }
-            return results
-        } else {
-            let promises = []
-            for (const item of array) {
-                promises.push(handle(item))
-            }
-            return Promise.all(promises).catch()
-        }
+        })
     },
     getExchangeAddress: (exchanges, exchangeName) => {
         const tempMapped = exchanges.map(e => e.tableName)
@@ -76,9 +78,10 @@ module.exports = {
 }
 
 let web3Config = [
-    [3000, "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws"],
-    [1200, "wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main"],
-    [2000, "wss://bsc-ws-node.nariox.org:443"]
+    // [3500, "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws"],
+    // [1200, "wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main"],
+    // [2000, "wss://bsc-ws-node.nariox.org:443"],
+    [1000, "wss://bsc.getblock.io/mainnet/?api_key=f9d5ea69-0b99-4dba-8513-7ab51df082a0"]
 ]
 
 let web3Objects = web3Config.map(config => {
@@ -88,15 +91,15 @@ let web3Objects = web3Config.map(config => {
             clientConfig: {
                 maxReceivedFrameSize: 100000000,
                 maxReceivedMessageSize: 100000000,
-                keepalive: true,
-                keepaliveInterval: 60000
+                // keepalive: true,
+                // keepaliveInterval: 60000
             },
-            reconnect: {
-                auto: true,
-                delay: 5000,
-                maxAttempts: 999999,
-                onTimeout: true
-            }
+            // reconnect: {
+            //     auto: true,
+            //     delay: 5000,
+            //     maxAttempts: 999999,
+            //     onTimeout: true
+            // }
         }
     )))
 })

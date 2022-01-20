@@ -4,7 +4,7 @@ async function main() {
     const database = new (require("./Database/Database"))
     await database.setup()
 
-    // const calculator = new (require("./Tools/Calculator"))
+    const calculator = new (require("./Tools/Calculator"))
 
     const exchanges = [
         new (require("./Exchanges/ApeSwap/ApeSwap"))(),
@@ -27,34 +27,34 @@ async function main() {
     const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
     await pairFetcher.start()
 
-    // const tradeTester = new (require("./Tools/TradeTester"))(database)
-    // await tradeTester.setup()
+    const tradeTester = new (require("./Tools/TradeTester"))(database)
+    await tradeTester.setup()
 
-    // const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
-    // const bestPairs = await basicFactory.getBestTokens()
+    const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
+    const bestPairs = await basicFactory.getBestTokens()
 
-    // await basicFactory.checkPairs(bestPairs, 5, async results => {
-    //     await doAsync(results, async result => {
-    //         if (result["profit"] !== undefined) {
-    //             console.log(`Testing trade (${result["profitUSD"].toFixed(2)}$)`)
-    //             const temp = new Promise(async resolve => {
-    //                 tradeTester.testTrade(
-    //                     result["token0"], result["token1"], result["amountIn"], result["borrowPair"],
-    //                     getExchangeAddress(exchanges, result["exchangeA"]),
-    //                     getExchangeAddress(exchanges, result["exchangeB"]),
-    //                     getExchangeAddress(exchanges, result["exchangeC"])
-    //                 ).then(profitETH => {
-    //                     console.log("\x1b[32mTrade completed:", (profitETH / 1E18 * 420).toFixed(2), "$\x1b[0m", result["token0"], result["token1"])
-    //                     resolve()
-    //                 }).catch(error => {
-    //                     console.log("\x1b[31mTrade failed\x1b[0m:", error)
-    //                     resolve()
-    //                 })
-    //             })
-    //             await temp
-    //         }
-    //     })
-    // })
+    await basicFactory.checkPairs(bestPairs, 20, async results => {
+        await doAsync(results, async result => {
+            if (result["profit"] !== undefined) {
+                console.log(`Testing trade (${result["profitUSD"].toFixed(2)}$)`)
+                const temp = new Promise(async resolve => {
+                    tradeTester.testTrade(
+                        result["token0"], result["token1"], result["amountIn"], result["borrowPair"],
+                        getExchangeAddress(exchanges, result["exchangeA"]),
+                        getExchangeAddress(exchanges, result["exchangeB"]),
+                        getExchangeAddress(exchanges, result["exchangeC"])
+                    ).then(profitWETH => {
+                        console.log("\x1b[32mTrade completed:", (profitWETH / 1E18 * 650).toFixed(2), "$\x1b[0m", result["token0"], result["token1"])
+                        resolve()
+                    }).catch(error => {
+                        console.log("\x1b[31mTrade failed\x1b[0m:", error)
+                        resolve()
+                    })
+                })
+                await temp
+            }
+        })
+    })
 }
 
 setTimeout(() => {

@@ -5,9 +5,9 @@ module.exports = class PairFetcher {
         this.database = database
 
         this.interval = 5000
-        this.parallelFetchLimit = 200
+        this.parallelFetchLimit = 500
         this.parallelInsertLimit = this.parallelFetchLimit
-        this.showStatus = true
+        this.showStatus = false
 
         this.exchanges = []
         this.exchangeData = {}

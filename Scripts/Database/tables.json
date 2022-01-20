@@ -1,10 +1,26 @@
 [
-  {
-    "name": "Tokens",
-    "columns": {
-      "tokenID": "int primary key auto_increment",
-      "tokenAddress": "varchar(45) not null unique",
-      "inWETH": "text"
-    }
-  }
+   {
+      "name": "Tokens",
+      "columns": {
+         "tokenID": "int primary key auto_increment",
+         "tokenAddress": "varchar(45) not null unique",
+         "inWETH": "text"
+      }
+   },
+   {
+      "name": "Trades",
+      "columns": {
+         "tradeID": "int primary key auto_increment",
+         "fsID": "text",
+         "token0": "int",
+         "token1": "int",
+         "amountIn": "text",
+         "borrowPair": "varchar(45)",
+         "exchangeA": "varchar(45)",
+         "exchangeB": "varchar(45)",
+         "exchangeC": "varchar(45)",
+         "profitWETH": "text",
+         "timestamp": "text"
+      }
+   }
 ]
