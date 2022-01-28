@@ -1,4 +1,4 @@
-const {getMax, doAsync} = require("../Tools/Helpers");
+const {getMax, doAsync, getBNBPrice} = require("../Tools/Helpers");
 
 module.exports = class BasicFactory {
     constructor(database, calculator) {
@@ -11,7 +11,7 @@ module.exports = class BasicFactory {
             this.exchanges.push(arguments[i])
 
         this.minProfitUSD = 0.6
-        this.ethPrice = 650
+        this.ethPrice = getBNBPrice()
         this.toUSD = eth => {
             return eth / 1E18 * this.ethPrice
         }
@@ -93,7 +93,7 @@ module.exports = class BasicFactory {
     }
 
     async checkPairs(pairs, parallel, callbackFunction) {
-        console.time(`Done fetching ${pairs.length} pairs`)
+        console.time(`Done checking ${pairs.length} pairs`)
         let totalChecked = 0
         while (totalChecked < pairs.length) {
             let promises = []
@@ -105,7 +105,7 @@ module.exports = class BasicFactory {
             const results = await Promise.all(promises)
             await callbackFunction(results)
         }
-        console.timeEnd(`Done fetching ${pairs.length} pairs`)
+        console.timeEnd(`Done checking ${pairs.length} pairs`)
     }
 
     async checkPair(pair) {

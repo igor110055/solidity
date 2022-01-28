@@ -1,6 +1,8 @@
-const {doAsync, getExchangeAddress} = require("./Tools/Helpers")
+const {doAsync, getExchangeAddress, fetchBNBPrice, getBNBPrice} = require("./Tools/Helpers")
 
 async function main() {
+    await fetchBNBPrice()
+
     const database = new (require("./Database/Database"))
     await database.setup()
 
@@ -24,16 +26,20 @@ async function main() {
         await database.createTable(exchange.tableName, exchange.tableStructure)
     }
 
-    const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
-    await pairFetcher.start()
+    // Currently disabled because of rate limits
+    // const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
+    // await pairFetcher.start()
 
     const tradeTester = new (require("./Tools/TradeTester"))(database)
     await tradeTester.setup()
 
     const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
-    const bestPairs = await basicFactory.getBestTokens()
 
-    await basicFactory.checkPairs(bestPairs, 20, async results => {
+    console.log("Fetching Pairs...")
+    const bestPairs = await basicFactory.getBestTokens()
+    console.log(`\x1b[32mFetched ${bestPairs.length} pairs\x1b[0m`)
+
+    await basicFactory.checkPairs(bestPairs, 1, async results => {
         await doAsync(results, async result => {
             if (result["profit"] !== undefined) {
                 console.log(`Testing trade (${result["profitUSD"].toFixed(2)}$)`)
@@ -43,8 +49,8 @@ async function main() {
                         getExchangeAddress(exchanges, result["exchangeA"]),
                         getExchangeAddress(exchanges, result["exchangeB"]),
                         getExchangeAddress(exchanges, result["exchangeC"])
-                    ).then(profitWETH => {
-                        console.log("\x1b[32mTrade completed:", (profitWETH / 1E18 * 650).toFixed(2), "$\x1b[0m", result["token0"], result["token1"])
+                    ).then(async profitWETH => {
+                        console.log("\x1b[32mTrade completed:", (profitWETH / 1E18 * getBNBPrice()).toFixed(2), "$\x1b[0m", result["token0"], result["token1"])
                         resolve()
                     }).catch(error => {
                         console.log("\x1b[31mTrade failed\x1b[0m:", error)
