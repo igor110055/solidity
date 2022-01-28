@@ -3,7 +3,7 @@ const fs = require("fs")
 const ganache = require("ganache-cli")
 const util = require("util")
 
-class TradeTester {
+module.exports = class TradeTester {
     constructor(database) {
         this.database = database
 
@@ -114,5 +114,3 @@ class TradeTester {
         })
     }
 }
-
-module.exports = TradeTester

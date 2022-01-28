@@ -11,6 +11,7 @@ module.exports = class Database {
     async setup() {
         this.con = this.MySQL.createConnection(this.config);
         await this.con.connect()
+        console.log(`\x1b[32mConnected to database\x1b[0m`)
 
         if (this.tables.length > 0) {
             for (const table of this.tables) {
