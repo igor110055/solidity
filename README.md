@@ -13,9 +13,6 @@ Because of this the bot will not be able to run at full speed.
 ### Database-Setup (unpack using Password):
 > ./Scripts/Database/config.rar
 
-## TODO
-- Connect Nodejs Script with Smart Contract
-
 ## Ganache-CLI
 ### Settings
 Mnemonic
@@ -33,13 +30,3 @@ Executes migration .js files (used for deploying contracts to blockchain)
 ### Test
 Runs all tests (used for testing each smart-contract-function)
 > truffle test
-
-## Fixes:
-### Web3 BN fix (not needed atm):
-> node_modules/number-to-bn/node_modules/bn.js/lib/bn.js
-
-Change:
-> assert(false, 'Number can only safely store up to 53 bits');
-
-To
-> ret = Number.MAX_SAFE_INTEGER;
