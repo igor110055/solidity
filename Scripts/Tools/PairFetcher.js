@@ -5,7 +5,7 @@ module.exports = class PairFetcher {
         this.database = database
 
         this.interval = 5000
-        this.parallelFetchLimit = 500
+        this.parallelFetchLimit = 100
         this.parallelInsertLimit = this.parallelFetchLimit
         this.showStatus = true
 
@@ -32,8 +32,8 @@ module.exports = class PairFetcher {
             }
         }
 
-        ticker().then()
         this.intervalID = setInterval(ticker, this.interval)
+        ticker().then()
     }
 
     async stop() {

@@ -33,7 +33,7 @@ async function main() {
     const tradeTester = new (require("./Tools/TradeTester"))(database)
     await tradeTester.setup()
 
-    const basicFactory = new (require("./Factories/BasicFactory"))(database, calculator, ...exchanges)
+    const basicFactory = new (require("./Factories/Basic"))(database, calculator, ...exchanges)
 
     console.log("Fetching Pairs...")
     const bestPairs = await basicFactory.getBestTokens()
