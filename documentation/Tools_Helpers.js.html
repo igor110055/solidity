@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Tools/Helpers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Tools/Helpers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Web3 = require("web3")
+const Axios = require("axios");
+
+let web3Config = [
+    [3500, "wss://speedy-nodes-nyc.moralis.io/37acbafabefa6ebb98e3b282/bsc/mainnet/ws"],
+    [1200, "wss://apis.ankr.com/wss/b1e0d936c6a84a7aa9f5caed17d44382/12b092c37506f14f5e16347e077f85b6/binance/full/main"],
+    [2000, "wss://bsc-ws-node.nariox.org:443"],
+    // [1000, "wss://bsc.getblock.io/mainnet/?api_key=5fe8e9c8-e755-48f1-a4cb-80f3406cbc3c"] // Limited balance
+]
+
+let web3Objects = web3Config.map(config => {
+    console.log(`\x1b[32mConnected to\x1b[0m ${config[1]}`)
+    return new Web3(new Web3.providers.WebsocketProvider(config[1], {
+        clientConfig: {
+            maxReceivedFrameSize: 100000000,
+            maxReceivedMessageSize: 100000000,
+            // keepalive: true,
+            // keepaliveInterval: 60000
+        },
+        // reconnect: {
+        //     auto: true,
+        //     delay: 5000,
+        //     maxAttempts: 999999,
+        //     onTimeout: true
+        // }
+    }))
+})
+
+let weights = web3Config.map(config => config[0])
+let bnbPrice = undefined
+
+module.exports = {
+    /**
+     * @param array
+     * @returns {undefined|*}
+     */
+    getMax: array => {
+        if (array.length > 0) {
+            let max = array[0]
+            for (let i = 1; i &lt; array.length; i++) {
+                if (BigInt(array[i]) > BigInt(max))
+                    max = array[i]
+            }
+            return max
+        }
+        return undefined
+    },
+    /**
+     * @param array
+     * @param handle
+     * @param parallelCount
+     * @returns {Promise&lt;unknown>}
+     */
+    doAsync: async (array, handle, parallelCount) => {
+        return new Promise(async resolve => {
+            if (parallelCount !== undefined) {
+                let results = []
+                let countDone = 0
+                while (countDone &lt; array.length) {
+                    let promises = []
+                    for (let i = 0; i &lt; Math.min(parallelCount, array.length - countDone); i++) {
+                        promises.push(handle(array[countDone + i]))
+                    }
+                    results.push(...(await Promise.all(promises).catch()))
+                    countDone += parallelCount
+                }
+                resolve(results)
+            } else {
+                let promises = []
+                for (const item of array) {
+                    promises.push(handle(item))
+                }
+                Promise.all(promises).then(resolve).catch(() => resolve([]))
+            }
+        })
+    },
+    /**
+     * @param exchanges
+     * @param exchangeName
+     * @returns {*}
+     */
+    getExchangeAddress: (exchanges, exchangeName) => {
+        const tempMapped = exchanges.map(e => e.tableName)
+        return exchanges[tempMapped.indexOf(exchangeName)].routerAddress
+    },
+    /**
+     * @param text
+     * @param color
+     */
+    printHeadline: (text, color) => {
+        if (color === "green")
+            console.log(`\x1b[32m${text}\x1b[0m`)
+        else if (color === "red")
+            console.log(`\x1b[31m${text}\x1b[0m`)
+        else if (color === "yellow")
+            console.log(`\x1b[33m${text}\x1b[0m`)
+        else
+            console.log(text)
+    },
+    /**
+     * @returns {Web3}
+     */
+    get web3() {
+        const weightsSum = weights.reduce(function (sum, weight) {
+            return sum + weight
+        }, 0)
+        let random = Math.floor(Math.random() * weightsSum)
+        let current = 0
+        for (let i = 0; i &lt; weights.length; i++) {
+            current += weights[i]
+            if (random &lt; current) {
+                return web3Objects[i]
+            }
+        }
+        return web3Objects[weights.length - 1]
+    },
+    /**
+     * @returns {Promise&lt;unknown>}
+     */
+    async fetchBNBPrice() {
+        return new Promise(async resolve => {
+            let response = await Axios.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
+            bnbPrice = parseFloat(response.data.price)
+            module.exports.printHeadline(`BNB Price: ${bnbPrice}`, "green")
+            resolve()
+        })
+    },
+    /**
+     * @returns {undefined}
+     */
+    getBNBPrice() {
+        return bnbPrice
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ApeSwap.html">ApeSwap</a></li><li><a href="BasicFactory.html">BasicFactory</a></li><li><a href="Biswap.html">Biswap</a></li><li><a href="BurgerSwap.html">BurgerSwap</a></li><li><a href="Calculator.html">Calculator</a></li><li><a href="CheeseSwap.html">CheeseSwap</a></li><li><a href="Database.html">Database</a></li><li><a href="Exchange.html">Exchange</a></li><li><a href="HyperJump.html">HyperJump</a></li><li><a href="JetSwap.html">JetSwap</a></li><li><a href="JulSwap.html">JulSwap</a></li><li><a href="Mdex.html">Mdex</a></li><li><a href="PairFetcher.html">PairFetcher</a></li><li><a href="PancakeV1.html">PancakeV1</a></li><li><a href="PancakeV2.html">PancakeV2</a></li><li><a href="TradeTester.html">TradeTester</a></li><li><a href="WaultSwap.html">WaultSwap</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Apr 22 2022 22:04:44 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

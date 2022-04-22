@@ -1,5 +1,11 @@
-module.exports = class Database {
+/**
+ * type: Database
+ */
+class Database {
     constructor() {
+        /**
+         * @type {mysqlAwait.MySQLAwait}
+         */
         this.MySQL = require('mysql-await')
 
         this.tables = require(__dirname + "/tables.json")
@@ -8,6 +14,9 @@ module.exports = class Database {
         this.databaseName = this.config.database
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async setup() {
         this.con = this.MySQL.createConnection(this.config);
         await this.con.connect()
@@ -26,6 +35,11 @@ module.exports = class Database {
         }, 15000)
     }
 
+    /**
+     * @param tableName
+     * @param columns
+     * @returns {Promise<void>}
+     */
     async createTable(tableName, columns) {
         let existingTables = await this.custom(
             `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
@@ -41,6 +55,11 @@ module.exports = class Database {
         }
     }
 
+    /**
+     * @param tableName
+     * @param jsonData
+     * @returns {Promise<string>}
+     */
     async insert(tableName, jsonData = "") {
         return new Promise(async resolve => {
             let insertCommand
@@ -57,6 +76,12 @@ module.exports = class Database {
         })
     }
 
+    /**
+     * @param tableName
+     * @param jsonColumns
+     * @param dataJsonArray
+     * @returns {Promise<string>}
+     */
     async insertMultiple(tableName, jsonColumns, dataJsonArray) {
         return new Promise(async resolve => {
             let insertValues = []
@@ -77,12 +102,24 @@ module.exports = class Database {
         })
     }
 
+    /**
+     * @param tableName
+     * @param columns
+     * @param condition
+     * @returns {Promise<string[]>}
+     */
     async select(tableName, columns = "*", condition = "") {
         return new Promise((resolve => {
             return resolve(this.con.awaitQuery(`select ${columns} from ${tableName} ${condition}`))
         }))
     }
 
+    /**
+     * @param tableName
+     * @param jsonConditions
+     * @param jsonData
+     * @returns {Promise<boolean>}
+     */
     async update(tableName, jsonConditions, jsonData) {
         return new Promise(async resolve => {
             if (jsonConditions !== undefined && jsonData !== undefined) {
@@ -103,6 +140,13 @@ module.exports = class Database {
         })
     }
 
+    /**
+     * @param tableName
+     * @param columnsArray
+     * @param dataJsonArray
+     * @param key
+     * @returns {Promise<boolean>}
+     */
     async updateMultiple(tableName, columnsArray, dataJsonArray, key) {
         return new Promise(async resolve => {
             if (columnsArray !== undefined && dataJsonArray !== undefined && key !== undefined) {
@@ -132,9 +176,15 @@ module.exports = class Database {
         })
     }
 
+    /**
+     * @param command
+     * @returns {Promise<string>}
+     */
     async custom(command) {
         return new Promise(resolve => {
             return resolve(this.con.awaitQuery(command))
         })
     }
 }
+
+module.exports = Database

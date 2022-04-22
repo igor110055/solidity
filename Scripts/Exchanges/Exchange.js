@@ -1,6 +1,9 @@
 const {web3} = require("../Tools/Helpers")
 
-module.exports = class Exchange {
+/**
+ * @class Exchange
+ */
+class Exchange {
     constructor() {
         if (new.target === Exchange)
             throw new Error("Class is abstract.")
@@ -14,10 +17,19 @@ module.exports = class Exchange {
         }
     }
 
+    /**
+     * @param pairContract
+     * @returns {Promise<void>}
+     */
     async getSwapFee(pairContract) {
         throw new Error("You need to overwrite this function.")
     }
 
+    /**
+     * @param token0
+     * @param token1
+     * @returns {Promise<unknown>}
+     */
     async getReserves(token0, token1) {
         return new Promise(async (resolve, reject) => {
             const pairAddress = await this.factoryContract.methods.getPair(token0, token1).call()
@@ -37,6 +49,11 @@ module.exports = class Exchange {
         })
     }
 
+    /**
+     * @param pairAddress
+     * @param token0
+     * @returns {Promise<unknown>}
+     */
     async getReservesFromPair(pairAddress, token0) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -56,6 +73,9 @@ module.exports = class Exchange {
         })
     }
 
+    /**
+     * @returns {Promise<unknown>}
+     */
     async getTotalPairs() {
         return new Promise(async resolve => {
             const allPairsLength = await this.factoryContract.methods.allPairsLength.call().call()
@@ -63,6 +83,10 @@ module.exports = class Exchange {
         })
     }
 
+    /**
+     * @param number
+     * @returns {Promise<unknown>}
+     */
     async getPairUsingNumber(number) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -86,6 +110,11 @@ module.exports = class Exchange {
         })
     }
 
+    /**
+     * @param amountIn
+     * @param token
+     * @returns {Promise<unknown>}
+     */
     async swapToWETH(amountIn, token) {
         return new Promise(async resolve => {
             if (token !== this.WETH) {
@@ -100,3 +129,5 @@ module.exports = class Exchange {
         })
     }
 }
+
+module.exports = Exchange

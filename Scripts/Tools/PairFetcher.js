@@ -1,6 +1,12 @@
 const {doAsync, printHeadline} = require("../Tools/Helpers")
 
-module.exports = class PairFetcher {
+/**
+ * @type {PairFetcher}
+ */
+class PairFetcher {
+    /**
+     * @param database
+     */
     constructor(database) {
         this.database = database
 
@@ -19,6 +25,9 @@ module.exports = class PairFetcher {
         this.alreadyFetching = false
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async start() {
         const ticker = async () => {
             if (!this.alreadyFetching) {
@@ -36,10 +45,17 @@ module.exports = class PairFetcher {
         ticker().then()
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async stop() {
         clearInterval(this.intervalID)
     }
 
+    /**
+     * @param exchange
+     * @returns {Promise<void>}
+     */
     async fetchPairs(exchange) {
         const missingPairs = await this.database.select(exchange.tableName, "number",
             `where address is null and number <= ${this.exchangeData[exchange.tableName]["total"]} 
@@ -69,6 +85,10 @@ module.exports = class PairFetcher {
         }
     }
 
+    /**
+     * @param exchange
+     * @returns {Promise<void>}
+     */
     async updateDatabase(exchange) {
         const allKnownPairs = (await this.database.select(exchange.tableName, "count(*) as n"))[0]["n"]
         const totalPairs = await exchange.getTotalPairs()
@@ -93,6 +113,9 @@ module.exports = class PairFetcher {
         }
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async printStatus() {
         console.log()
 
@@ -122,3 +145,5 @@ module.exports = class PairFetcher {
         }
     }
 }
+
+module.exports = PairFetcher

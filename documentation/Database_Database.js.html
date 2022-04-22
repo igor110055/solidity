@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Database/Database.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Database/Database.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * type: Database
+ */
+class Database {
+    constructor() {
+        /**
+         * @type {mysqlAwait.MySQLAwait}
+         */
+        this.MySQL = require('mysql-await')
+
+        this.tables = require(__dirname + "/tables.json")
+        this.config = require(__dirname + "/config.json")
+
+        this.databaseName = this.config.database
+    }
+
+    /**
+     * @returns {Promise&lt;void>}
+     */
+    async setup() {
+        this.con = this.MySQL.createConnection(this.config);
+        await this.con.connect()
+        console.log(`\x1b[32mConnected to database\x1b[0m`)
+
+        if (this.tables.length > 0) {
+            for (const table of this.tables) {
+                await this.createTable(table["name"], table["columns"])
+            }
+        }
+
+        setInterval(() => {
+            this.custom(
+                `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}" limit 1`
+            )
+        }, 15000)
+    }
+
+    /**
+     * @param tableName
+     * @param columns
+     * @returns {Promise&lt;void>}
+     */
+    async createTable(tableName, columns) {
+        let existingTables = await this.custom(
+            `SELECT table_name FROM information_schema.tables WHERE table_schema="${this.databaseName}"`
+        )
+        existingTables = existingTables.map(t => t["table_name"])
+
+        if (!existingTables.includes(tableName)) {
+            let formattedColumns = []
+            for (const column in columns)
+                formattedColumns.push(`${column} ${columns[column]}`)
+
+            await this.con.awaitQuery(`create table ${tableName} (${formattedColumns.join(", ")})`)
+        }
+    }
+
+    /**
+     * @param tableName
+     * @param jsonData
+     * @returns {Promise&lt;string>}
+     */
+    async insert(tableName, jsonData = "") {
+        return new Promise(async resolve => {
+            let insertCommand
+            if (jsonData !== "") {
+                let values = []
+                for (const columnValue in jsonData)
+                    values.push(`"${jsonData[columnValue]}"`)
+                insertCommand = `insert into ${tableName} (${Object.keys(jsonData).join(", ")}) values (${values.join(", ")})`
+            } else {
+                insertCommand = `insert into ${tableName} () values()`
+            }
+
+            return resolve(this.con.awaitQuery(insertCommand))
+        })
+    }
+
+    /**
+     * @param tableName
+     * @param jsonColumns
+     * @param dataJsonArray
+     * @returns {Promise&lt;string>}
+     */
+    async insertMultiple(tableName, jsonColumns, dataJsonArray) {
+        return new Promise(async resolve => {
+            let insertValues = []
+            for (const jsonData of dataJsonArray) {
+                let values = []
+                for (const columnValue in jsonData)
+                    if (jsonData[columnValue].toString().startsWith("("))
+                        values.push(`${jsonData[columnValue]}`)
+                    else
+                        values.push(`"${jsonData[columnValue]}"`)
+
+                insertValues.push("(" + values.join(", ") + ")")
+            }
+
+            return resolve(this.con.awaitQuery(
+                `insert ignore into ${tableName} (${jsonColumns.join(", ")}) values ${insertValues.join(", ")} `
+            ))
+        })
+    }
+
+    /**
+     * @param tableName
+     * @param columns
+     * @param condition
+     * @returns {Promise&lt;string[]>}
+     */
+    async select(tableName, columns = "*", condition = "") {
+        return new Promise((resolve => {
+            return resolve(this.con.awaitQuery(`select ${columns} from ${tableName} ${condition}`))
+        }))
+    }
+
+    /**
+     * @param tableName
+     * @param jsonConditions
+     * @param jsonData
+     * @returns {Promise&lt;boolean>}
+     */
+    async update(tableName, jsonConditions, jsonData) {
+        return new Promise(async resolve => {
+            if (jsonConditions !== undefined &amp;&amp; jsonData !== undefined) {
+                let formattedConditions = []
+                for (const condition in jsonConditions) {
+                    formattedConditions.push(`${condition}="${jsonConditions[condition]}"`)
+                }
+
+                let formattedValues = []
+                for (const column in jsonData) {
+                    formattedValues.push(`${column}="${jsonData[column]}"`)
+                }
+
+                return resolve(this.con.awaitQuery(
+                    `update ${tableName} set ${formattedValues.join(", ")} where ${formattedConditions.join(" AND ")}`
+                ))
+            }
+        })
+    }
+
+    /**
+     * @param tableName
+     * @param columnsArray
+     * @param dataJsonArray
+     * @param key
+     * @returns {Promise&lt;boolean>}
+     */
+    async updateMultiple(tableName, columnsArray, dataJsonArray, key) {
+        return new Promise(async resolve => {
+            if (columnsArray !== undefined &amp;&amp; dataJsonArray !== undefined &amp;&amp; key !== undefined) {
+                let insertValues = []
+                for (const jsonData of dataJsonArray) {
+                    let values = []
+                    for (const columnValue in jsonData)
+                        if (jsonData[columnValue].toString().startsWith("("))
+                            values.push(`${jsonData[columnValue]}`)
+                        else
+                            values.push(`"${jsonData[columnValue]}"`)
+
+                    insertValues.push("(" + values.join(", ") + ")")
+                }
+
+                let updateValues = []
+                for (const column of columnsArray) {
+                    if (column !== key)
+                        updateValues.push(`${column} = values(${column})`)
+                }
+
+                return resolve(this.con.awaitQuery(
+                    `insert into ${tableName} (${columnsArray.join(", ")}) values${insertValues.join(", ")}
+                    on duplicate key update ${updateValues.join(", ")}`
+                ))
+            }
+        })
+    }
+
+    /**
+     * @param command
+     * @returns {Promise&lt;string>}
+     */
+    async custom(command) {
+        return new Promise(resolve => {
+            return resolve(this.con.awaitQuery(command))
+        })
+    }
+}
+
+module.exports = Database
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ApeSwap.html">ApeSwap</a></li><li><a href="BasicFactory.html">BasicFactory</a></li><li><a href="Biswap.html">Biswap</a></li><li><a href="BurgerSwap.html">BurgerSwap</a></li><li><a href="Calculator.html">Calculator</a></li><li><a href="CheeseSwap.html">CheeseSwap</a></li><li><a href="Database.html">Database</a></li><li><a href="Exchange.html">Exchange</a></li><li><a href="HyperJump.html">HyperJump</a></li><li><a href="JetSwap.html">JetSwap</a></li><li><a href="JulSwap.html">JulSwap</a></li><li><a href="Mdex.html">Mdex</a></li><li><a href="PairFetcher.html">PairFetcher</a></li><li><a href="PancakeV1.html">PancakeV1</a></li><li><a href="PancakeV2.html">PancakeV2</a></li><li><a href="TradeTester.html">TradeTester</a></li><li><a href="WaultSwap.html">WaultSwap</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Apr 22 2022 22:04:44 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

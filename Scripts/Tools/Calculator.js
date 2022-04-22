@@ -1,8 +1,24 @@
-module.exports = class Calculator {
+/**
+ * @type {Calculator}
+ */
+class Calculator {
+    /**
+     * @param loan
+     * @returns {string}
+     */
     static calculateFlashSwapFee = loan => {
         return (((loan * 3) / 997) + 1).toString().split(".")[0]
     }
 
+    /**
+     * @param aToken0Reserve
+     * @param aToken1Reserve
+     * @param aFee
+     * @param bToken0Reserve
+     * @param bToken1Reserve
+     * @param bFee
+     * @returns {string}
+     */
     calculateSimpleExtrema(aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
         const a = aToken0Reserve
         const b = aToken1Reserve
@@ -14,6 +30,16 @@ module.exports = class Calculator {
         return output.toString().split(".")[0]
     }
 
+    /**
+     * @param amountIn
+     * @param aToken0Reserve
+     * @param aToken1Reserve
+     * @param aFee
+     * @param bToken0Reserve
+     * @param bToken1Reserve
+     * @param bFee
+     * @returns {string}
+     */
     calculateProfit(amountIn, aToken0Reserve, aToken1Reserve, aFee, bToken0Reserve, bToken1Reserve, bFee) {
         let amountInWithFee = amountIn * (10000 - aFee)
         let numerator = amountInWithFee * aToken1Reserve
@@ -28,3 +54,5 @@ module.exports = class Calculator {
         return (output - flashSwapFee).toString().split(".")[0]
     }
 }
+
+module.exports = Calculator

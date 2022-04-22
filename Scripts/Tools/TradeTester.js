@@ -3,7 +3,13 @@ const fs = require("fs")
 const ganache = require("ganache-cli")
 const util = require("util")
 
-module.exports = class TradeTester {
+/**
+ * @type {TradeTester}
+ */
+class TradeTester {
+    /**
+     * @param database
+     */
     constructor(database) {
         this.database = database
 
@@ -24,8 +30,6 @@ module.exports = class TradeTester {
             }
         }))
 
-        // this.web3 = new Web3("ws://127.0.0.1:8545")
-
         this.accountAddress = "0x1EB930454a508999C1FB9550720218E407D86e5e"
         this.web3.eth.accounts.wallet.add("97c442ff6999b6a21fd910bb2ea2e11768e575f0a4f3a762fbb96f19033e1668")
 
@@ -34,6 +38,9 @@ module.exports = class TradeTester {
         this.transactionCount = undefined
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
     async setup() {
         const jsonData = JSON.parse(fs.readFileSync(`../truffleBox/build/contracts/${this.contractFile}`).toString())
         const abi = jsonData["abi"]
@@ -59,6 +66,16 @@ module.exports = class TradeTester {
         this.transactionCount = await this.web3.eth.getTransactionCount(this.accountAddress)
     }
 
+    /**
+     * @param token0
+     * @param token1
+     * @param amountIn
+     * @param borrowPair
+     * @param exchangeA
+     * @param exchangeB
+     * @param exchangeC
+     * @returns {Promise<unknown>}
+     */
     async testTrade(token0, token1, amountIn, borrowPair, exchangeA, exchangeB, exchangeC) {
         // console.log({
         //     "\x1b[0mTokens": `${token0} --> ${result["token1"]}`,
@@ -114,3 +131,5 @@ module.exports = class TradeTester {
         })
     }
 }
+
+module.exports = TradeTester

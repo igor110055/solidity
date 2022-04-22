@@ -1,6 +1,10 @@
 const Exchange = require("../Exchange")
 const { web3 } = require("../../Tools/Helpers")
 
+/**
+ * @class HyperJump
+ * @extends Exchange
+ */
 class HyperJump extends Exchange {
     constructor() {
         super();
@@ -19,6 +23,10 @@ class HyperJump extends Exchange {
         this.tableName = "HyperJumpPairs"
     }
 
+    /**
+     * @param pairContract
+     * @returns {Promise<number>}
+     */
     async getSwapFee(pairContract){
         return new Promise(async resolve => {
             return resolve(40)

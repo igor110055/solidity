@@ -1,6 +1,13 @@
 const {getMax, doAsync, getBNBPrice} = require("../Tools/Helpers");
 
-module.exports = class BasicFactory {
+/**
+ * @type {BasicFactory}
+ */
+class BasicFactory {
+    /**
+     * @param database
+     * @param calculator
+     */
     constructor(database, calculator) {
         this.database = database
         this.calculator = calculator
@@ -66,6 +73,11 @@ module.exports = class BasicFactory {
     }
 
 
+    /**
+     * @param limit
+     * @param offset
+     * @returns {Promise<string[]>}
+     */
     async getBestTokens(limit = 1E6, offset = 0) {
         return new Promise(async resolve => {
             let tableSelects = []
@@ -92,8 +104,14 @@ module.exports = class BasicFactory {
         })
     }
 
+    /**
+     * @param pairs
+     * @param parallel
+     * @param callbackFunction
+     * @returns {Promise<void>}
+     */
     async checkPairs(pairs, parallel, callbackFunction) {
-        console.time(`Done checking ${pairs.length} pairs`)
+        console.time(`Done checking ${pairs.length} pair${pairs.length > 1 ? "s" : ""}`)
         let totalChecked = 0
         while (totalChecked < pairs.length) {
             let promises = []
@@ -102,12 +120,15 @@ module.exports = class BasicFactory {
                 promises.push(this.checkPair(pairs[totalChecked + i]))
 
             totalChecked += number
-            const results = await Promise.all(promises)
-            await callbackFunction(results)
+            await callbackFunction(await Promise.all(promises))
         }
-        console.timeEnd(`Done checking ${pairs.length} pairs`)
+        console.timeEnd(`Done checking ${pairs.length} pair${pairs.length > 1 ? "s" : ""}`)
     }
 
+    /**
+     * @param pair
+     * @returns {Promise<string[]>}
+     */
     async checkPair(pair) {
         return new Promise(async resolve => {
             const validExchangeNames = pair["exchanges"].split(",")
@@ -132,7 +153,14 @@ module.exports = class BasicFactory {
             let amountOutUSD0 = this.toUSD(amountOut0)
             if (amountOutUSD0 < this.minProfitUSD) return resolve(0)
 
-            let [borrowReserve0, borrowAddress0] = await this.getBorrowPair(pair["token0"], pair["token0ID"], pair["token1"], pair["token1ID"], extrema0)
+            let [borrowReserve0, borrowAddress0] = await this.getBorrowPair(
+                pair["token0"],
+                pair["token0ID"],
+                pair["token1"],
+                pair["token1ID"],
+                extrema0
+            )
+
             if (BigInt(borrowReserve0) >= BigInt(extrema0)) {
                 return resolve(this.formatOutput(
                     extrema0, profit0, amountOut0, amountOutUSD0, pair["token0"], pair["token1"],
@@ -150,7 +178,13 @@ module.exports = class BasicFactory {
             let amountOutUSD1 = this.toUSD(amountOut1)
             if (amountOutUSD1 < this.minProfitUSD) return resolve(0)
 
-            let [borrowReserve1, borrowAddress1] = await this.getBorrowPair(pair["token1"], pair["token1ID"], pair["token0"], pair["token0ID"], extrema1)
+            let [borrowReserve1, borrowAddress1] = await this.getBorrowPair(
+                pair["token1"],
+                pair["token1ID"],
+                pair["token0"],
+                pair["token0ID"],
+                extrema1
+            )
 
             if (BigInt(borrowReserve1) > BigInt(extrema1)) {
                 if (exchangeA1 === undefined)
@@ -186,6 +220,19 @@ module.exports = class BasicFactory {
         })
     }
 
+    /**
+     * @param amountIn
+     * @param profit
+     * @param profitETH
+     * @param profitUSD
+     * @param token0
+     * @param token1
+     * @param borrowPair
+     * @param exchangeA
+     * @param exchangeB
+     * @param exchangeC
+     * @returns {Promise<{profitETH, profitUSD, exchangeA, token0, exchangeB, token1, exchangeC, amountIn, profit, borrowPair}>}
+     */
     async formatOutput(amountIn, profit, profitETH, profitUSD, token0, token1, borrowPair, exchangeA, exchangeB, exchangeC) {
         return {
             "amountIn": amountIn,
@@ -201,6 +248,14 @@ module.exports = class BasicFactory {
         }
     }
 
+    /**
+     * @param token0
+     * @param token0ID
+     * @param token1
+     * @param token1ID
+     * @param amountNeeded
+     * @returns {Promise<string[]>}
+     */
     async getBorrowPair(token0, token0ID, token1, token1ID, amountNeeded) {
         return new Promise(async resolve => {
             let promises = []
@@ -237,8 +292,6 @@ module.exports = class BasicFactory {
 
             const validPairs = await this.database.custom(selectCommands.join(" union "))
 
-            if (validPairs.length > 5000)
-                console.log("borrowPairs exceeded 5k", token0, token0ID, token1, token1ID, amountNeeded)
             const results = await doAsync(validPairs, async (item) => {
                 return {
                     "reserve": (await this.exchanges[0].getReservesFromPair(item["address"], token0))["reserve0"],
@@ -273,6 +326,12 @@ module.exports = class BasicFactory {
         })
     }
 
+    /**
+     * @param exchangeData
+     * @param reversed
+     * @param maxExtrema
+     * @returns {Promise<number[]>}
+     */
     async getBestInput(exchangeData, reversed = false, maxExtrema = undefined) {
         let bestInput = 0, profit = 0, exchangeA = undefined, exchangeB = undefined
         for (let i = 0; i < exchangeData.length; i++) {
@@ -287,6 +346,7 @@ module.exports = class BasicFactory {
                     exchangeData[j]["reserve" + (reversed ? "0" : "1")],
                     exchangeData[j]["swapFee"],
                 ]
+
                 const tempExtrema = this.calculator.calculateSimpleExtrema(...params)
                 if (!isNaN(tempExtrema) && BigInt(tempExtrema) > 0) {
                     const extrema = maxExtrema === undefined ? tempExtrema : (BigInt(maxExtrema) > BigInt(tempExtrema) ? tempExtrema : maxExtrema)
@@ -303,6 +363,11 @@ module.exports = class BasicFactory {
         return [bestInput, profit, exchangeA, exchangeB]
     }
 
+    /**
+     * @param amountIn
+     * @param token
+     * @returns {Promise<string[]>}
+     */
     async getBestETHExchange(amountIn, token) {
         let promises = []
         for (const exchange of this.exchanges) {
@@ -322,3 +387,5 @@ module.exports = class BasicFactory {
         ]
     }
 }
+
+module.exports = BasicFactory

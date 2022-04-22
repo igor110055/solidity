@@ -1,6 +1,10 @@
 const Exchange = require("../Exchange")
 const { web3 } = require("../../Tools/Helpers")
 
+/**
+ * @class Mdex
+ * @extends Exchange
+ */
 class Mdex extends Exchange {
     constructor() {
         super();
@@ -19,6 +23,10 @@ class Mdex extends Exchange {
         this.tableName = "MdexPairs"
     }
 
+    /**
+     * @param pairContract
+     * @returns {Promise<number>}
+     */
     async getSwapFee(pairContract){
         return new Promise(async resolve => {
             return resolve(this.factoryContract.methods.getPairFees(pairContract.options.address).call())

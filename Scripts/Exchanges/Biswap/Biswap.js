@@ -1,6 +1,10 @@
 const Exchange = require("../Exchange")
 const { web3 } = require("../../Tools/Helpers")
 
+/**
+ * @class Biswap
+ * @extends Exchange
+ */
 class Biswap extends Exchange {
     constructor() {
         super();
@@ -19,6 +23,10 @@ class Biswap extends Exchange {
         this.tableName = "BiswapPairs"
     }
 
+    /**
+     * @param pairContract
+     * @returns {Promise<number>}
+     */
     async getSwapFee(pairContract){
         return new Promise(async resolve => {
             return resolve(10)

@@ -10,6 +10,7 @@
     "axios": "^0.24.0",
     "chai-as-promised": "^7.1.1",
     "ganache-cli": "^6.12.2",
+    "jsdoc": "^3.6.10",
     "mysql-await": "^2.1.8",
     "truffle": "^5.4.10",
     "web3": "^1.5.3",

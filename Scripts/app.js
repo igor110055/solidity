@@ -27,8 +27,8 @@ async function main() {
     }
 
     // Currently disabled because of rate limits
-    // const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
-    // await pairFetcher.start()
+    const pairFetcher = new (require("./Tools/PairFetcher"))(database, ...exchanges)
+    await pairFetcher.start()
 
     const tradeTester = new (require("./Tools/TradeTester"))(database)
     await tradeTester.setup()

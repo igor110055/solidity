@@ -30,6 +30,10 @@ let weights = web3Config.map(config => config[0])
 let bnbPrice = undefined
 
 module.exports = {
+    /**
+     * @param array
+     * @returns {undefined|*}
+     */
     getMax: array => {
         if (array.length > 0) {
             let max = array[0]
@@ -41,6 +45,12 @@ module.exports = {
         }
         return undefined
     },
+    /**
+     * @param array
+     * @param handle
+     * @param parallelCount
+     * @returns {Promise<unknown>}
+     */
     doAsync: async (array, handle, parallelCount) => {
         return new Promise(async resolve => {
             if (parallelCount !== undefined) {
@@ -64,10 +74,19 @@ module.exports = {
             }
         })
     },
+    /**
+     * @param exchanges
+     * @param exchangeName
+     * @returns {*}
+     */
     getExchangeAddress: (exchanges, exchangeName) => {
         const tempMapped = exchanges.map(e => e.tableName)
         return exchanges[tempMapped.indexOf(exchangeName)].routerAddress
     },
+    /**
+     * @param text
+     * @param color
+     */
     printHeadline: (text, color) => {
         if (color === "green")
             console.log(`\x1b[32m${text}\x1b[0m`)
@@ -78,6 +97,9 @@ module.exports = {
         else
             console.log(text)
     },
+    /**
+     * @returns {Web3}
+     */
     get web3() {
         const weightsSum = weights.reduce(function (sum, weight) {
             return sum + weight
@@ -92,6 +114,9 @@ module.exports = {
         }
         return web3Objects[weights.length - 1]
     },
+    /**
+     * @returns {Promise<unknown>}
+     */
     async fetchBNBPrice() {
         return new Promise(async resolve => {
             let response = await Axios.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
@@ -100,6 +125,9 @@ module.exports = {
             resolve()
         })
     },
+    /**
+     * @returns {undefined}
+     */
     getBNBPrice() {
         return bnbPrice
     }
